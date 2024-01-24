@@ -14,6 +14,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.BasePageEpam;
 import pages.EpamPages;
 
@@ -23,8 +24,9 @@ import java.util.Objects;
 
 public class TaskOne {
 
-    private String browserType = "ch";
+    private String browserType = "ff";
     private WebDriver driver;
+    private WebDriverWait wait;
     private JavascriptExecutor js;
     private final Duration DEFAULT_WAITING_TIME = Duration.ofSeconds(30);
     private EpamPages epamPages;
@@ -45,12 +47,14 @@ public class TaskOne {
             case "ff" -> driver = new FirefoxDriver();
         }
         js = (JavascriptExecutor) driver;
-        driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5L));
-        driver.get("https://www.epam.com/");
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         pageFactoryManager = new PageFactoryManager(driver);
         basePage = pageFactoryManager.getBasePage();
         epamPages = pageFactoryManager.getHomePage();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5L));
+        driver.get("https://www.epam.com/");
+        basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
     }
 
     // UI Cases
@@ -110,11 +114,13 @@ public class TaskOne {
         epamPages = pageFactoryManager.getHomePage();
         driver.get("https://www.epam.com/about/who-we-are/contact");
         basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-/*        js.executeScript("arguments[0].scrollIntoView();",
+        js.executeScript("arguments[0].scrollIntoView();", epamPages.getListOfRegions().get(1));
+/*        ",
 epamPages.getListOfRegions().get(1));
 epamPages.getCookieAccept().click();
+js.executeScript("window.scrollBy(0,2800)", "");
 */
-        js.executeScript("window.scrollBy(0,2800)", "");
+        js.executeScript("window.scrollBy(0,-200)", "");
         Assert.assertTrue(epamPages.getCanadaAmerica().isDisplayed());
         epamPages.getListOfRegions().get(1).click();
         Assert.assertTrue(epamPages.getArmeniaEMEA().isDisplayed());
@@ -166,7 +172,7 @@ epamPages.getCookieAccept().click();
     @After
     public void tearDown() {
 
-        //driver.close();
+        driver.close();
     }
 
 }

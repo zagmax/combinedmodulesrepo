@@ -19,7 +19,7 @@ public class EpamPages {
     @FindBy(xpath = "//*[@class=\"column-control\"]//*[@class=\"validation-tooltip\"]//*[contains(text(),\"This is a required field\")]")
     private List<WebElement> listOfValidationWarnings;
 
-    @FindBy(xpath="//*[contains(@class,\"button-submit\")]//*[contains(text(),\"Submit\")]")
+    @FindBy(xpath = "//*[contains(@class,\"button-submit\")]//*[contains(text(),\"Submit\")]")
     private WebElement formSubmitButton;
 
     @FindBy(css = ".location-selector__button")

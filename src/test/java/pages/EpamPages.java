@@ -8,7 +8,7 @@ import org.openqa.selenium.support.PageFactory;
 
 import java.util.List;
 
-public class HomePageEpam {
+public class EpamPages {
     private WebDriver driver;
 
     @FindBy(css = ".desktop-logo + .theme-switcher-ui > .theme-switcher")
@@ -16,7 +16,11 @@ public class HomePageEpam {
 
     @FindBy(css = "[role=\"tab\"]")
     private List<WebElement> listOfRegions;
+    @FindBy(xpath = "//*[@class=\"column-control\"]//*[@class=\"validation-tooltip\"]//*[contains(text(),\"This is a required field\")]")
+    private List<WebElement> listOfValidationWarnings;
 
+    @FindBy(xpath="//*[contains(@class,\"button-submit\")]//*[contains(text(),\"Submit\")]")
+    private WebElement formSubmitButton;
 
     @FindBy(css = ".location-selector__button")
     private WebElement langButton;
@@ -46,13 +50,17 @@ public class HomePageEpam {
     @FindBy(css = ".hamburger-menu__dropdown .theme-switcher-label")
     private WebElement switcherLabel;
 
-    public HomePageEpam(WebDriver driver) {
+    public EpamPages(WebDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
     }
 
     public WebElement getSearchField() {
         return searchField;
+    }
+
+    public WebElement getFormSubmitButton() {
+        return formSubmitButton;
     }
 
     public List<WebElement> getLangList() {
@@ -81,6 +89,10 @@ public class HomePageEpam {
 
     public WebElement getAustraliaAPAC() {
         return australiaCountryPlateAPAC;
+    }
+
+    public List<WebElement> getListOfValidationWarnings() {
+        return listOfValidationWarnings;
     }
 
     public WebElement getSearchConfirmBtn() {

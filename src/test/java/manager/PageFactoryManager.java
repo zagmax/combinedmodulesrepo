@@ -2,7 +2,7 @@ package manager;
 
 import org.openqa.selenium.WebDriver;
 import pages.BasePageEpam;
-import pages.HomePageEpam;
+import pages.EpamPages;
 
 
 public class PageFactoryManager {
@@ -13,8 +13,8 @@ public class PageFactoryManager {
         this.driver = driver;
     }
 
-    public HomePageEpam getHomePage() {
-        return new HomePageEpam(driver);
+    public EpamPages getHomePage() {
+        return new EpamPages(driver);
     }
     public BasePageEpam getBasePage() {
         return new BasePageEpam(driver);

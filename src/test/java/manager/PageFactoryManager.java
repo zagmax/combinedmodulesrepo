@@ -25,7 +25,7 @@ public class PageFactoryManager {
     }
 
     public DemoWebShopPage getDemoWebShopPage() {
-        return new DemoWebShopPage(driver);
+        return new DemoWebShopPage();
     }
 
     public DemoShopCheckout getDemoShopCheckout() {

@@ -4,11 +4,11 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import jdk.jfr.Name;
 import manager.PageFactoryManager;
 import net.bytebuddy.utility.RandomString;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -21,9 +21,9 @@ import pages.DemoWebShopPage;
 import java.time.Duration;
 import java.util.List;
 
-public class TaskTwo {
+public class TaskTwoTests {
     private static final String TESTING_SITE = "https://demowebshop.tricentis.com/";
-    private String browserType = "ff";
+    private String browserType = "ch";
     private WebDriver driver;
     private final Duration DEFAULT_WAITING_TIME = Duration.ofSeconds(30);
     private DemoShopCheckout demoShopCheckout;
@@ -32,13 +32,13 @@ public class TaskTwo {
     private DemoWebShopPage demoWebShopPage;
 
 
-    @BeforeClass
+    @BeforeAll
     public static void profileSetUp() {
         WebDriverManager.chromedriver().setup();
         WebDriverManager.firefoxdriver().setup();
     }
 
-    @Before
+    @BeforeEach
     public void testsSetUp() {
         switch (browserType) {
             case "ch" -> driver = new ChromeDriver();
@@ -66,8 +66,8 @@ public class TaskTwo {
         driver.findElement(new By.ByCssSelector("[id=\"ConfirmPassword\"]")).sendKeys("asdasd");
         demoWebShopPage.getRegistrationSubmit().click();
         basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        Assert.assertEquals("https://demowebshop.tricentis.com/registerresult/1", driver.getCurrentUrl());
-        Assert.assertTrue(driver.findElement(By.xpath("//*[contains(text(),\"Your registration completed\")]")).isDisplayed());
+        Assertions.assertEquals("https://demowebshop.tricentis.com/registerresult/1", driver.getCurrentUrl());
+        Assertions.assertTrue(driver.findElement(By.xpath("//*[contains(text(),\"Your registration completed\")]")).isDisplayed());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class TaskTwo {
         driver.findElement(new By.ByCssSelector("[id=\"Password\"]")).sendKeys("asdasd");
         driver.findElement(new By.ByCssSelector("[value=\"Log in\"]")).click();
         basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        Assert.assertTrue(driver.findElement(By.xpath("//*[@class=\"header-links\"]//*[contains(text(),\"asdasd@asd.asdasd\")]")).isDisplayed());
+        Assertions.assertTrue(driver.findElement(By.xpath("//*[@class=\"header-links\"]//*[contains(text(),\"asdasd@asd.asdasd\")]")).isDisplayed());
     }
 
     @Test
@@ -97,7 +97,7 @@ public class TaskTwo {
                 }
             }
         }
-        Assert.assertEquals(3, count);
+        Assertions.assertEquals(3, count);
     }
 
     @Test
@@ -111,13 +111,13 @@ public class TaskTwo {
         basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
         List<WebElement> listPrices = driver.findElements(By.xpath("actual-price"));
         for (int i = 0; i < listPrices.size() - 1; i++) {
-            Assert.assertTrue(Integer.parseInt(listPrices.get(i).getText()) < Integer.parseInt(listPrices.get(i + 1).getText()));
+            Assertions.assertTrue(Integer.parseInt(listPrices.get(i).getText()) < Integer.parseInt(listPrices.get(i + 1).getText()));
         }
         //check sorting with setting via URL
         driver.get("https://demowebshop.tricentis.com/accessories?orderby=10");
         listPrices = driver.findElements(By.xpath("actual-price"));
         for (int i = 0; i < listPrices.size() - 1; i++) {
-            Assert.assertTrue(Integer.parseInt(listPrices.get(i).getText()) > Integer.parseInt(listPrices.get(i + 1).getText()));
+            Assertions.assertTrue(Integer.parseInt(listPrices.get(i).getText()) > Integer.parseInt(listPrices.get(i + 1).getText()));
         }
     }
 
@@ -126,11 +126,11 @@ public class TaskTwo {
     public void checkNumberOnPageChange() {
         driver.get("https://demowebshop.tricentis.com/accessories?pagesize=4");
         basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        Assert.assertTrue(4 >= driver.findElements(new By.ByCssSelector(".product-item")).size());
+        Assertions.assertTrue(4 >= driver.findElements(new By.ByCssSelector(".product-item")).size());
         driver.findElement(new By.ByCssSelector("[id=\"products-pagesize\"]")).click();
         driver.findElement(new By.ByCssSelector("[id=\"products-pagesize\"] :nth-child(2)")).click();
         basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        Assert.assertTrue(driver.findElements(new By.ByCssSelector(".product-item")).size() <= 8);
+        Assertions.assertTrue(driver.findElements(new By.ByCssSelector(".product-item")).size() <= 8);
     }
 
     @Test
@@ -142,7 +142,7 @@ public class TaskTwo {
         String product = driver.findElement(new By.ByCssSelector("[itemprop=\"name\"]")).getText();
         driver.findElement(new By.ByCssSelector(".header-links [class=\"ico-wishlist\"]")).click();
         basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        Assert.assertEquals(product, driver.findElement(new By.ByCssSelector(".cart .product")).getAttribute("innerText"));
+        Assertions.assertEquals(product, driver.findElement(new By.ByCssSelector(".cart .product")).getAttribute("innerText"));
     }
 
     @Test
@@ -154,7 +154,9 @@ public class TaskTwo {
         String product = driver.findElement(new By.ByCssSelector("[itemprop=\"name\"]")).getText();
         driver.findElement(new By.ByCssSelector(".header [id=topcartlink]")).click();
         basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        Assert.assertEquals(product, driver.findElement(new By.ByCssSelector(".cart .product")).getAttribute("innerText"));
+        driver.navigate().refresh();
+        basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
+        Assertions.assertEquals(product, driver.findElement(new By.ByCssSelector(".cart .product")).getAttribute("innerText"));
     }
 
     @Test
@@ -165,7 +167,7 @@ public class TaskTwo {
         driver.findElement(new By.ByCssSelector("[class=\"qty nobr\"] input")).sendKeys("0");
         driver.findElement(new By.ByCssSelector("[name=updatecart]")).click();
         basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        Assert.assertTrue(driver.findElement(new By.ByCssSelector("[class=order-summary-content]")).isDisplayed());
+        Assertions.assertTrue(driver.findElement(new By.ByCssSelector("[class=order-summary-content]")).isDisplayed());
     }
 
     @Test
@@ -192,10 +194,10 @@ public class TaskTwo {
         basePage.clickCSSElementWhenClickable("[id=payment-info-buttons-container] [value=Continue]");
         basePage.clickCSSElementWhenClickable("[value=Confirm]");
         basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        Assert.assertTrue(driver.findElement(new By.ByCssSelector(".order-completed .title")).isDisplayed());
+        Assertions.assertTrue(driver.findElement(new By.ByCssSelector(".order-completed .title")).isDisplayed());
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         driver.close();
     }

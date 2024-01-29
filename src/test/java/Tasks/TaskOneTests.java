@@ -3,18 +3,17 @@ package Tasks;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import jdk.jfr.Name;
 import manager.PageFactoryManager;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.BasePageEpam;
 import pages.EpamPages;
 
@@ -22,32 +21,30 @@ import java.io.File;
 import java.time.Duration;
 import java.util.Objects;
 
-public class TaskOne {
+public class TaskOneTests {
 
-    private String browserType = "ff";
+    private final String browserType = "ch";
     private WebDriver driver;
-    private WebDriverWait wait;
     private JavascriptExecutor js;
     private final Duration DEFAULT_WAITING_TIME = Duration.ofSeconds(30);
     private EpamPages epamPages;
     private BasePageEpam basePage;
     private PageFactoryManager pageFactoryManager;
-    private String defaultSavePathForBrowser = "C:\\Users\\zagmax\\Downloads\\";
+    private final String defaultSavePathForBrowser = "C:\\Users\\zagmax\\Downloads\\";
 
-    @BeforeClass
+    @BeforeAll
     public static void profileSetUp() {
         WebDriverManager.chromedriver().setup();
         WebDriverManager.firefoxdriver().setup();
     }
 
-    @Before
+    @BeforeEach
     public void testsSetUp() {
         switch (browserType) {
             case "ch" -> driver = new ChromeDriver();
             case "ff" -> driver = new FirefoxDriver();
         }
         js = (JavascriptExecutor) driver;
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         pageFactoryManager = new PageFactoryManager(driver);
         basePage = pageFactoryManager.getBasePage();
         epamPages = pageFactoryManager.getHomePage();
@@ -62,16 +59,16 @@ public class TaskOne {
     @Test
     @Name("1. check title is correct")
     public void checkTitleEpam() {
-        Assert.assertEquals("EPAM | Software Engineering & Product Development Services", driver.getTitle());
+        Assertions.assertEquals("EPAM | Software Engineering & Product Development Services", driver.getTitle());
     }
 
     @Test
     @Name("2. Check the ability to switch Light / Dark mode")
     public void checkDarkLightMode() {
         epamPages = pageFactoryManager.getHomePage();
-        Assert.assertEquals("Dark Mode", epamPages.getSwitcherLabel().getAttribute("innerText"));
+        Assertions.assertEquals("Dark Mode", epamPages.getSwitcherLabel().getAttribute("innerText"));
         epamPages.getSwitcherElement().click();
-        Assert.assertEquals("Light Mode", epamPages.getSwitcherLabel().getAttribute("innerText"));
+        Assertions.assertEquals("Light Mode", epamPages.getSwitcherLabel().getAttribute("innerText"));
     }
 
     @Test
@@ -86,7 +83,7 @@ public class TaskOne {
             }
         }
         basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        Assert.assertTrue(epamPages.getLangButton().getAttribute("innerText").contains("UA"));
+        Assertions.assertTrue(epamPages.getLangButton().getAttribute("innerText").contains("UA"));
     }
 
     @Test
@@ -104,7 +101,7 @@ public class TaskOne {
                 }
             }
         }
-        Assert.assertEquals(5, count);
+        Assertions.assertEquals(5, count);
     }
 
     // WEB accessibility
@@ -121,11 +118,11 @@ epamPages.getCookieAccept().click();
 js.executeScript("window.scrollBy(0,2800)", "");
 */
         js.executeScript("window.scrollBy(0,-200)", "");
-        Assert.assertTrue(epamPages.getCanadaAmerica().isDisplayed());
+        Assertions.assertTrue(epamPages.getCanadaAmerica().isDisplayed());
         epamPages.getListOfRegions().get(1).click();
-        Assert.assertTrue(epamPages.getArmeniaEMEA().isDisplayed());
+        Assertions.assertTrue(epamPages.getArmeniaEMEA().isDisplayed());
         epamPages.getListOfRegions().get(2).click();
-        Assert.assertTrue(epamPages.getAustraliaAPAC().isDisplayed());
+        Assertions.assertTrue(epamPages.getAustraliaAPAC().isDisplayed());
     }
 
     @Test
@@ -135,7 +132,7 @@ js.executeScript("window.scrollBy(0,2800)", "");
         epamPages.searchIcon().click();
         epamPages.getSearchField().sendKeys("AI");
         epamPages.getSearchConfirmBtn().click();
-        Assert.assertEquals("https://www.epam.com/search?q=AI", driver.getCurrentUrl());
+        Assertions.assertEquals("https://www.epam.com/search?q=AI", driver.getCurrentUrl());
 
     }
 
@@ -145,7 +142,7 @@ js.executeScript("window.scrollBy(0,2800)", "");
         driver.get("https://www.epam.com/about/who-we-are/contact");
         js.executeScript("window.scrollBy(0,2200)", "");
         epamPages.getFormSubmitButton().click();
-        Assert.assertEquals(4, epamPages.getListOfValidationWarnings().size());
+        Assertions.assertEquals(4, epamPages.getListOfValidationWarnings().size());
     }
 
     @Test
@@ -154,7 +151,7 @@ js.executeScript("window.scrollBy(0,2800)", "");
         driver.get("https://www.epam.com/about");
         basePage.getEpamLogo().click();
         basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        Assert.assertEquals("https://www.epam.com/", driver.getCurrentUrl());
+        Assertions.assertEquals("https://www.epam.com/", driver.getCurrentUrl());
 
     }
 
@@ -162,16 +159,17 @@ js.executeScript("window.scrollBy(0,2800)", "");
     @Name("9. Check that allows to download report ")
     public void checkReportDownload() {
         driver.get("https://www.epam.com/about");
-        driver.findElement(By.xpath("(//*[contains(text(),\"DOWNLOAD\")])[1]")).click();
+        WebElement el = driver.findElement(By.xpath("(//*[contains(text(),\"DOWNLOAD\")])[1]"));
+        js.executeScript("arguments[0].scrollIntoView();", el);
+        js.executeScript("arguments[0].click();", el);
         File file = new File(defaultSavePathForBrowser + "EPAM_Corporate_Overview_Q3_october.pdf");
-        Assert.assertTrue(file.exists());
-        Assert.assertTrue(file.delete());
+        Assertions.assertTrue(file.exists());
+        Assertions.assertTrue(file.delete());
     }
 
 
-    @After
+    @AfterEach
     public void tearDown() {
-
         driver.close();
     }
 

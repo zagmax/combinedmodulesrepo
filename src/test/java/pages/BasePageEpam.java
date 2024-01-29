@@ -12,7 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class BasePageEpam {
-    private WebDriver driver;
+    private final WebDriver driver;
 
     @FindBy(xpath = "//*[@class=\"header__logo-container desktop-logo\"]")
     private WebElement epamLogo;
@@ -26,12 +26,9 @@ public class BasePageEpam {
         new WebDriverWait(driver, timeToWait).until(webDriver -> ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete"));
     }
 
-    public void clickCSSElementWhenClickable(String path){
+    public void clickCSSElementWhenClickable(String path) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(new By.ByCssSelector(path)))).click();
-    }
-    public void waitForAjaxToComplete(Duration timeToWait) {
-        new WebDriverWait(driver, timeToWait).until(webDriver -> ((JavascriptExecutor) webDriver).executeScript("return window.jQuery != undefined && jQuery.active == 0;"));
     }
 
     public WebElement getEpamLogo() {

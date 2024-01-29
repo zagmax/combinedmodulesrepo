@@ -1,11 +1,11 @@
 package Tasks;
 
 import jdk.jfr.Name;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 
-public class TaskThree {
+public class TaskThreeTests {
     private final String endp = "https://petstore.swagger.io/v2/";
 
     @Test

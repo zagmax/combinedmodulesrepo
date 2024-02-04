@@ -12,6 +12,7 @@
 5. To switch between Firefox and Chrome browsers to run tests on, change variable called "browser" to "ch" for Chrome or "ff" for Firefox within application.properties file
 
 ![image](https://github.com/zagmax/combinedmodulesrepo/assets/45147763/411b5bbe-9969-4d5a-8991-d074c4589c25)
+
 7. Project logs are created with Log4j and saved within */target/logs/
 8. Projects testing reporting is executed by maven surefire.
    1) Test reports file "surefire-report.html" located in */target/site/

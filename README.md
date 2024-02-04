@@ -26,6 +26,6 @@
    1) mvn run - runs Maven build to go through all stages from clean start
    2) mvn test - to run tests
    3) mvn site - to create test report
+
    Or also maven plugin could be used instead to select and run commands via simple double clicking 
 ![image](https://github.com/zagmax/combinedmodulesrepo/assets/45147763/82d1273a-5f26-49cd-9216-9d237f7498df)
-  

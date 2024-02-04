@@ -5,11 +5,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-public class DemoShopCheckout {
-    private final WebDriver driver;
+import java.util.List;
 
+public class DemoShopCheckout {
     public DemoShopCheckout(WebDriver driver) {
-        this.driver = driver;
         PageFactory.initElements(driver, this);
     }
 
@@ -24,6 +23,69 @@ public class DemoShopCheckout {
 
     @FindBy(css = "[class=inputs] [id=BillingNewAddress_PhoneNumber]")
     private WebElement phoneNumber;
+
+    @FindBy(css = "[id=termsofservice]")
+    private WebElement termsOfServiceCheckbox;
+
+    @FindBy(css = "[class=\"checkout-buttons\"] [name=\"checkout\"]")
+    private WebElement checkoutButton;
+
+    @FindBy(css = "[id=billing-address-select]")
+    private WebElement addressSelect;
+
+    @FindBy(css = "[id=billing-address-select] option")
+    private List<WebElement> listOfAddresses;
+
+    @FindBy(css = "[id=BillingNewAddress_CountryId]")
+    private WebElement countriesListDropdown;
+
+    @FindBy(css = "[id=BillingNewAddress_CountryId] option")
+    private List<WebElement> listOfCountries;
+
+    @FindBy(css = "[value=Continue]")
+    private List<WebElement> continueButtons;
+
+    @FindBy(css = "[value=Confirm]")
+    private WebElement submitCheckoutButton;
+
+    @FindBy(css = ".order-completed .title")
+    private WebElement completedOrderTitle;
+
+    public WebElement getCompletedOrderTitle() {
+        return completedOrderTitle;
+    }
+
+    public List<WebElement> getContinueButtons() {
+        return continueButtons;
+    }
+
+    public WebElement getSubmitCheckoutButton() {
+        return submitCheckoutButton;
+    }
+
+    public WebElement getAddressSelect() {
+        return addressSelect;
+    }
+
+    public List<WebElement> getListOfAddresses() {
+        return listOfAddresses;
+    }
+
+    public WebElement getCountriesListDropdown() {
+        return countriesListDropdown;
+    }
+
+    public List<WebElement> getListOfCountries() {
+        return listOfCountries;
+    }
+
+    public WebElement getCheckoutButton() {
+        return checkoutButton;
+    }
+
+    public WebElement getTermsOfServiceCheckbox() {
+        return termsOfServiceCheckbox;
+    }
 
     public WebElement getCity() {
         return city;

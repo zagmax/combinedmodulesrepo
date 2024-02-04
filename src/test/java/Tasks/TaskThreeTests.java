@@ -1,15 +1,29 @@
 package Tasks;
 
-import jdk.jfr.Name;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import manager.PageFactoryManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.Properties;
 
 import static io.restassured.RestAssured.given;
 
 public class TaskThreeTests {
-    private final String endp = "https://petstore.swagger.io/v2/";
+    private final Logger log = LogManager.getRootLogger();
+    private final Properties PROPERTIES = PageFactoryManager.getPROPERTIES();
+
+    @BeforeAll
+    public static void profileSetUp() {
+        WebDriverManager.chromedriver().setup();
+        WebDriverManager.firefoxdriver().setup();
+    }
 
     @Test
-    @Name("1. Verify that allows creating a User")
+    @DisplayName("1. Verify that allows creating a User")
     public void checkUserCreate() {
         String body = """
                 {
@@ -23,19 +37,20 @@ public class TaskThreeTests {
                   "userStatus": 0
                 }
                 """;
-        var response = given().header("Content-type", "application/json").and().body(body).when().post(endp + "user").then().statusCode(200);
-        response.log().body();
+        var response = given().header("Content-type", "application/json").and().body(body).when().post(PROPERTIES.getProperty("swaggerPage") + "user").then().statusCode(200);
+        log.info("user creation test executed \n" + "Response:\n" + response.log().body());
     }
 
     @Test
-    @Name("2. Verify that allows login as a User")
+    @DisplayName("2. Verify that allows login as a User")
     public void checkLoginUser() {
-        var response = given().when().get(endp + "user/login?username=test&password=test").then().statusCode(200);
-        response.log().body();
+        var response = given().when().get(PROPERTIES.getProperty("swaggerPage") + "user/login?username=test&password=test").then().statusCode(200);
+        log.info("logging in user test executed \n" + "Response:\n" + response.log().body());
+
     }
 
     @Test
-    @Name("3. Verify that allows creating the list of Users")
+    @DisplayName("3. Verify that allows creating the list of Users")
     public void checkUserListCreate() {
         String body = """
                 [
@@ -62,19 +77,19 @@ public class TaskThreeTests {
                 }
                 ]
                 """;
-        var response = given().header("Content-type", "application/json").and().body(body).when().post(endp + "user/createWithList").then().statusCode(200);
-        response.log().body();
+        var response = given().header("Content-type", "application/json").and().body(body).when().post(PROPERTIES.getProperty("swaggerPage") + "user/createWithList").then().statusCode(200);
+        log.info("list of users creation test executed \n" + "Response:\n" + response.log().body());
     }
 
     @Test
-    @Name("4. Verify that allows Log out User")
+    @DisplayName("4. Verify that allows Log out User")
     public void checkUserLogout() {
-        var response = given().when().get(endp + "user/logout").then().statusCode(200);
-        response.log().body();
+        var response = given().when().get(PROPERTIES.getProperty("swaggerPage") + "user/logout").then().statusCode(200);
+        log.info("logging out test executed \n" + "Response:\n" + response.log().body());
     }
 
     @Test
-    @Name("5. Verify that allows adding a new Pet")
+    @DisplayName("5. Verify that allows adding a new Pet")
     public void checkAddingPet() {
         String body = """
                 {
@@ -96,12 +111,12 @@ public class TaskThreeTests {
                   "status": "available"
                 }
                 """;
-        var response = given().header("Content-type", "application/json").and().body(body).when().post(endp + "pet").then().statusCode(200);
-        response.log().body();
+        var response = given().header("Content-type", "application/json").and().body(body).when().post(PROPERTIES.getProperty("swaggerPage") + "pet").then().statusCode(200);
+        log.info("adding pet test executed \n" + "Response:\n" + response.log().body());
     }
 
     @Test
-    @Name("6. Verify that allows updating Pet’s image")
+    @DisplayName("6. Verify that allows updating Pet’s image")
     public void checkAddPetImage() {
         String body = """
                 {
@@ -123,12 +138,12 @@ public class TaskThreeTests {
                 "status": "OUT OF STOCK"
                 }
                 """;
-        var response = given().header("Content-type", "application/json").and().body(body).when().put(endp + "pet").then().statusCode(200);
-        response.log().body();
+        var response = given().header("Content-type", "application/json").and().body(body).when().put(PROPERTIES.getProperty("swaggerPage") + "pet").then().statusCode(200);
+        log.info("adding link to pet imagine test executed \n" + "Response:\n" + response.log().body());
     }
 
     @Test
-    @Name("7. Verify that allows updating Pet’s name and status")
+    @DisplayName("7. Verify that allows updating Pet’s name and status")
     public void checkUpdatePetNameStatus() {
         String body = """
                 {
@@ -150,16 +165,16 @@ public class TaskThreeTests {
                   "status": "OUT OF STOCK"
                 }
                 """;
-        var response = given().header("Content-type", "application/json").and().body(body).when().put(endp + "pet").then().statusCode(200);
-        response.log().body();
+        var response = given().header("Content-type", "application/json").and().body(body).when().put(PROPERTIES.getProperty("swaggerPage") + "pet").then().statusCode(200);
+        log.info("update pet status test executed \n" + "Response:\n" + response.log().body());
     }
 
     @Test
-    @Name("8. Verify that allows deleting Pet ")
+    @DisplayName("8. Verify that allows deleting Pet ")
     public void checkDeletePet() {
         checkAddingPet();
-        var response = given().when().delete(endp + "pet/10").then().statusCode(200);
-        response.log().body();
+        var response = given().when().delete(PROPERTIES.getProperty("swaggerPage") + "pet/10").then().statusCode(200);
+        log.info("deleting a pet test executed \n" + "Response:\n" + response.log().body());
     }
 
 }

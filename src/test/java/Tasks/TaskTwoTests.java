@@ -1,33 +1,30 @@
 package Tasks;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import jdk.jfr.Name;
 import manager.PageFactoryManager;
 import net.bytebuddy.utility.RandomString;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import pages.BasePageEpam;
+import pages.CorePage;
 import pages.DemoShopCheckout;
 import pages.DemoWebShopPage;
 
 import java.time.Duration;
-import java.util.List;
+import java.util.Properties;
 
 public class TaskTwoTests {
-    private static final String TESTING_SITE = "https://demowebshop.tricentis.com/";
-    private String browserType = "ch";
-    private WebDriver driver;
+    private final Logger log = LogManager.getRootLogger();
+    private final Properties PROPERTIES = PageFactoryManager.getPROPERTIES();
+
     private final Duration DEFAULT_WAITING_TIME = Duration.ofSeconds(30);
-    private DemoShopCheckout demoShopCheckout;
-    private BasePageEpam basePage;
+    private CorePage corePage;
     private PageFactoryManager pageFactoryManager;
     private DemoWebShopPage demoWebShopPage;
 
@@ -40,56 +37,65 @@ public class TaskTwoTests {
 
     @BeforeEach
     public void testsSetUp() {
-        switch (browserType) {
-            case "ch" -> driver = new ChromeDriver();
-            case "ff" -> driver = new FirefoxDriver();
-        }
-        pageFactoryManager = new PageFactoryManager(driver);
+        log.info("Next Test initiated");
+        pageFactoryManager = new PageFactoryManager();
         demoWebShopPage = pageFactoryManager.getDemoWebShopPage();
-        basePage = pageFactoryManager.getBasePage();
-        driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5L));
+        corePage = pageFactoryManager.getCorePage();
+        pageFactoryManager.getDriver().manage().window().maximize();
+        pageFactoryManager.getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(5L));
+    }
+
+    @AfterEach
+    public void tearDown() {
+        pageFactoryManager.getDriver().close();
     }
 
 
     @Test
-    @Name("1. Verify that allows register a User")
+    @DisplayName("1. Verify that allows register a User")
     public void checkRegistration() {
-        driver.get(TESTING_SITE + "register");
-        basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
+        corePage.openPage(PROPERTIES.getProperty("taskTwoHP") + "register");
+        corePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
         String mailName = RandomString.make(5);
-        driver.findElement(new By.ByCssSelector("[id=\"gender-male\"]")).click();
-        driver.findElement(new By.ByCssSelector("[id=\"FirstName\"]")).sendKeys("asdasd");
-        driver.findElement(new By.ByCssSelector("[id=\"LastName\"]")).sendKeys("asdasd");
-        driver.findElement(new By.ByCssSelector("[id=\"Email\"]")).sendKeys(mailName + "@mail.mail");
-        driver.findElement(new By.ByCssSelector("[id=\"Password\"]")).sendKeys("asdasd");
-        driver.findElement(new By.ByCssSelector("[id=\"ConfirmPassword\"]")).sendKeys("asdasd");
+        demoWebShopPage.clickGenderRadioButton();
+        demoWebShopPage.getFirstNameField().sendKeys("asdasd");
+        demoWebShopPage.getLastNameField().sendKeys("asdasd");
+        demoWebShopPage.getEmailField().sendKeys(mailName + "@mail.mail");
+        demoWebShopPage.getPasswordField().sendKeys("asdasd");
+        demoWebShopPage.getPasswordFieldConfirm().sendKeys("asdasd");
         demoWebShopPage.getRegistrationSubmit().click();
-        basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        Assertions.assertEquals("https://demowebshop.tricentis.com/registerresult/1", driver.getCurrentUrl());
-        Assertions.assertTrue(driver.findElement(By.xpath("//*[contains(text(),\"Your registration completed\")]")).isDisplayed());
+        corePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
+        Assertions.assertEquals(
+                PROPERTIES.getProperty("demoRegistrationRedirect"), pageFactoryManager.getDriver().getCurrentUrl(), "Redirect after registration was not executed"
+        );
+        Assertions.assertTrue(
+                demoWebShopPage.getRegistrationCompleteTitle().isDisplayed(), "No congratulation message after registration is displayed"
+        );
+        log.info("registration test executed");
     }
 
     @Test
-    @Name("2. Verify that allows login a User")
+    @DisplayName("2. Verify that allows login a User")
     public void checkLogin() {
-        driver.get("https://demowebshop.tricentis.com/login");
-        driver.findElement(new By.ByCssSelector("[id=\"Email\"]")).sendKeys("asdasd@asd.asdasd");
-        driver.findElement(new By.ByCssSelector("[id=\"Password\"]")).sendKeys("asdasd");
-        driver.findElement(new By.ByCssSelector("[value=\"Log in\"]")).click();
-        basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        Assertions.assertTrue(driver.findElement(By.xpath("//*[@class=\"header-links\"]//*[contains(text(),\"asdasd@asd.asdasd\")]")).isDisplayed());
+        corePage.openPage(PROPERTIES.getProperty("demoLoginPage"));
+        demoWebShopPage.getEmailField().sendKeys("asdasd@asd.asdasd");
+        demoWebShopPage.getPasswordField().sendKeys("asdasd");
+        demoWebShopPage.getLoginButton().click();
+        corePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
+        Assertions.assertTrue(
+                demoWebShopPage.getProfileLink().isDisplayed(), "Login was unsuccessful"
+        );
+        log.info("logging in test executed");
     }
 
     @Test
-    @Name("3. Verify that ‘Computers’ group has 3 sub-groups with correct names")
+    @DisplayName("3. Verify that ‘Computers’ group has 3 sub-groups with correct names")
     public void checkComputersGroupSelection() {
-        driver.get("https://demowebshop.tricentis.com/computers");
-        basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
+        corePage.openPage(PROPERTIES.getProperty("demoComputersPage"));
+        corePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
         String[] subCategories = {"Desktops", "Notebooks", "Accessories"};
-        By path = By.xpath("//*[@class=\"item-box\"]//*[@class=\"title\"]/a");
         int count = 0;
-        for (WebElement el : driver.findElements(path)) {
+        for (WebElement el : demoWebShopPage.getSubCategoryList()) {
             for (String str : subCategories) {
                 if (el.getText().equals(str)) {
                     count++;
@@ -97,108 +103,126 @@ public class TaskTwoTests {
                 }
             }
         }
-        Assertions.assertEquals(3, count);
+        Assertions.assertEquals(3, count, "One or more subcategory missing from Computer category");
+        log.info("subcategory test executed");
     }
 
     @Test
-    @Name("4. Verify that allows sorting items (different options)")
+    @DisplayName("4. Verify that allows sorting items (different options)")
     public void checkSortingProducts() {
-        driver.get("https://demowebshop.tricentis.com/desktops");
-        basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
+        corePage.openPage(PROPERTIES.getProperty("demoDesktopCatalogue"));
+        corePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
+
         //check sorting with setting via option selection
-        driver.findElement(new By.ByCssSelector("[id=\"products-orderby\"]")).click();
-        driver.findElement(By.xpath("//*[contains(text(),\"Price: High to Low\")]")).click();
-        basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        List<WebElement> listPrices = driver.findElements(By.xpath("actual-price"));
-        for (int i = 0; i < listPrices.size() - 1; i++) {
-            Assertions.assertTrue(Integer.parseInt(listPrices.get(i).getText()) < Integer.parseInt(listPrices.get(i + 1).getText()));
+        demoWebShopPage.getOrderByDropdown().click();
+        demoWebShopPage.getSortOptionsSorting().get(4).click();
+        corePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
+        for (int i = 0; i < demoWebShopPage.getPriceList().size() - 1; i++) {
+            Assertions.assertTrue(Integer.parseInt(demoWebShopPage.getPriceList().get(i).getText()) < Integer.parseInt(demoWebShopPage.getPriceList().get(i + 1).getText()), "sorting is not correct or not applied");
         }
+
         //check sorting with setting via URL
-        driver.get("https://demowebshop.tricentis.com/accessories?orderby=10");
-        listPrices = driver.findElements(By.xpath("actual-price"));
-        for (int i = 0; i < listPrices.size() - 1; i++) {
-            Assertions.assertTrue(Integer.parseInt(listPrices.get(i).getText()) > Integer.parseInt(listPrices.get(i + 1).getText()));
+        corePage.openPage("https://demowebshop.tricentis.com/accessories?orderby=10");
+        for (int i = 0; i < demoWebShopPage.getPriceList().size() - 1; i++) {
+            Assertions.assertTrue(Integer.parseInt(demoWebShopPage.getPriceList().get(i).getText()) > Integer.parseInt(demoWebShopPage.getPriceList().get(i + 1).getText()), "sorting is not correct or not applied");
         }
+        log.info("sorting test executed");
     }
 
     @Test
-    @Name("5. Verify that allows changing number of items on page")
+    @DisplayName("5. Verify that allows changing number of items on page")
     public void checkNumberOnPageChange() {
-        driver.get("https://demowebshop.tricentis.com/accessories?pagesize=4");
-        basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        Assertions.assertTrue(4 >= driver.findElements(new By.ByCssSelector(".product-item")).size());
-        driver.findElement(new By.ByCssSelector("[id=\"products-pagesize\"]")).click();
-        driver.findElement(new By.ByCssSelector("[id=\"products-pagesize\"] :nth-child(2)")).click();
-        basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        Assertions.assertTrue(driver.findElements(new By.ByCssSelector(".product-item")).size() <= 8);
+        corePage.openPage(PROPERTIES.getProperty("demoAccessories"));
+        demoWebShopPage.getPagesizeDropdown().click();
+        demoWebShopPage.getSortOptionsProductAmount().get(0).click();
+        corePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
+        Assertions.assertTrue(4 >= demoWebShopPage.getProductList().size(), "More than 4 items shown for \"4\" page size");
+        demoWebShopPage.getSortOptionsProductAmount().get(1).click();
+        corePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
+        Assertions.assertTrue(8 >= demoWebShopPage.getProductList().size(), "More than 8 items shown for \"8\" page size");
+        log.info("page size test executed");
     }
 
     @Test
-    @Name("6. Verify that allows adding an item to the Wishlist")
+    @DisplayName("6. Verify that allows adding an item to the Wishlist")
     public void checkWishlistAdd() {
-        checkLogin();
-        driver.get("https://demowebshop.tricentis.com/copy-of-copy-of-copy-of-copy-of-tcp-self-paced-training");
-        driver.findElement(new By.ByCssSelector("[value=\"Add to wishlist\"]")).click();
-        String product = driver.findElement(new By.ByCssSelector("[itemprop=\"name\"]")).getText();
-        driver.findElement(new By.ByCssSelector(".header-links [class=\"ico-wishlist\"]")).click();
-        basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        Assertions.assertEquals(product, driver.findElement(new By.ByCssSelector(".cart .product")).getAttribute("innerText"));
+        corePage.openPage(PROPERTIES.getProperty("demoItemToWishlist"));
+        demoWebShopPage.getAddToWishlistButton().click();
+        String product = demoWebShopPage.getProductTitle().getText();
+        demoWebShopPage.getWishlistLink().click();
+        corePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
+        pageFactoryManager.getDriver().navigate().refresh();
+        boolean itemAdded = false;
+        for (WebElement item : demoWebShopPage.getWishlistCartItems()) {
+            if (item.getAttribute("innerText").equals(product)) {
+                itemAdded = true;
+                break;
+            }
+        }
+        Assertions.assertTrue(itemAdded, "Item was not added to wishlist");
+        log.info("adding to wishlist test executed");
     }
 
     @Test
-    @Name("7. Verify that allows adding an item to the card")
+    @DisplayName("7. Verify that allows adding an item to the card")
     public void checkAddToCart() {
-        driver.get("https://demowebshop.tricentis.com/141-inch-laptop");
-        basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        driver.findElement(new By.ByCssSelector(".add-to-cart [type=\"button\"]")).click();
-        String product = driver.findElement(new By.ByCssSelector("[itemprop=\"name\"]")).getText();
-        driver.findElement(new By.ByCssSelector(".header [id=topcartlink]")).click();
-        basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        driver.navigate().refresh();
-        basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        Assertions.assertEquals(product, driver.findElement(new By.ByCssSelector(".cart .product")).getAttribute("innerText"));
+        corePage.openPage(PROPERTIES.getProperty("demoTestLaptop"));
+        corePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
+        demoWebShopPage.getAddToCartButton().click();
+        String product = demoWebShopPage.getProductTitle().getText();
+        demoWebShopPage.getHeaderCartLink().click();
+        corePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
+        pageFactoryManager.getDriver().navigate().refresh();
+        corePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
+        boolean itemAdded = false;
+        for (WebElement item : demoWebShopPage.getBasketItems()) {
+            if (item.getAttribute("innerText").equals(product)) {
+                itemAdded = true;
+                break;
+            }
+        }
+        Assertions.assertTrue(itemAdded, "Item was not added to basket");
+        log.info("adding to basket test executed");
     }
 
     @Test
-    @Name("8. Verify that allows removing an item from the card")
+    @DisplayName("8. Verify that allows removing an item from the card")
     public void checkRemoveItemFromCart() {
         checkAddToCart();
-        driver.findElement(new By.ByCssSelector("[class=\"qty nobr\"] input")).clear();
-        driver.findElement(new By.ByCssSelector("[class=\"qty nobr\"] input")).sendKeys("0");
-        driver.findElement(new By.ByCssSelector("[name=updatecart]")).click();
-        basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        Assertions.assertTrue(driver.findElement(new By.ByCssSelector("[class=order-summary-content]")).isDisplayed());
+        demoWebShopPage.getItemQuantityField().clear();
+        demoWebShopPage.getItemQuantityField().sendKeys("0");
+        demoWebShopPage.getUpdateCardButton().click();
+        corePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
+        Assertions.assertTrue(demoWebShopPage.getCartSummary().getText().contains("Your Shopping Cart is empty!"), "Item was not removed from the cart");
+        log.info("removing from basket test executed");
     }
 
     @Test
-    @Name("9. Verify that allows checkout an item ")
+    @DisplayName("9. Verify that allows checkout an item ")
     public void checkCheckoutFlow() {
         checkLogin();
         checkAddToCart();
-        basePage.clickCSSElementWhenClickable("[id=termsofservice]");
-        basePage.clickCSSElementWhenClickable("[class=\"checkout-buttons\"] [name=\"checkout\"]");
-        basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        demoShopCheckout = pageFactoryManager.getDemoShopCheckout();
-        basePage.clickCSSElementWhenClickable("[id=billing-address-select]");
-        basePage.clickCSSElementWhenClickable("[id=billing-address-select] :nth-child(2)");
-        basePage.clickCSSElementWhenClickable("[id=BillingNewAddress_CountryId]");
-        basePage.clickCSSElementWhenClickable("[id=BillingNewAddress_CountryId] [value=\"2\"]");
+        DemoShopCheckout demoShopCheckout = pageFactoryManager.getDemoShopCheckout();
+        corePage.clickWR(demoShopCheckout.getTermsOfServiceCheckbox());
+        corePage.clickWR(demoShopCheckout.getCheckoutButton());
+        corePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
+        corePage.clickWR(demoShopCheckout.getAddressSelect());
+        corePage.clickWR(demoShopCheckout.getListOfAddresses().get(1));
+        corePage.clickWR(demoShopCheckout.getCountriesListDropdown());
+        corePage.clickWR(demoShopCheckout.getListOfCountries().get(1));
         demoShopCheckout.getCity().sendKeys("city");
         demoShopCheckout.getAddressOne().sendKeys("address");
         demoShopCheckout.getZipPost().sendKeys("010101");
         demoShopCheckout.getPhoneNumber().sendKeys("+499999999");
-        basePage.clickCSSElementWhenClickable("[id=billing-buttons-container] [value=Continue]");
-        basePage.clickCSSElementWhenClickable("[id=shipping-buttons-container] [value=Continue]");
-        basePage.clickCSSElementWhenClickable("[id=shipping-method-buttons-container] [value=Continue]");
-        basePage.clickCSSElementWhenClickable("[id=payment-method-buttons-container] [value=Continue]");
-        basePage.clickCSSElementWhenClickable("[id=payment-info-buttons-container] [value=Continue]");
-        basePage.clickCSSElementWhenClickable("[value=Confirm]");
-        basePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
-        Assertions.assertTrue(driver.findElement(new By.ByCssSelector(".order-completed .title")).isDisplayed());
+        for (int i = 0; i < 5; i++) {
+            corePage.clickWR(demoShopCheckout.getContinueButtons().get(i));
+        }
+        corePage.clickWR(demoShopCheckout.getSubmitCheckoutButton());
+        corePage.waitForPageLoadComplete(DEFAULT_WAITING_TIME);
+        Assertions.assertTrue(demoShopCheckout.getCompletedOrderTitle().isDisplayed());
+        log.info("checkout flow test executed");
+
     }
 
-    @AfterEach
-    public void tearDown() {
-        driver.close();
-    }
+
 }

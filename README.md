@@ -9,10 +9,17 @@
    3)rest-assured
 3. Classes that contain tests are located in  */test/java/Tasks/
 4. Support classes that contain webpage elements locators for web tests located in */test/java/pages/
-5. To switch between Firefox and Chrome browsers to run tests on, change variable called "browserType" within test classes under Tasks package
-6. Projects testing reporting is executed by maven surefire
-    - To get test results in report format next steps should be done
-       1) run maven build  
-       2) after build is complete, open in any browser file "surefire-report.html"  located in */target/site/
-       3) page should open in browser and have similar look to attached example  
-          ![report](https://github.com/zagmax/combinedmodulesrepo/assets/45147763/87dff02d-8a79-4c7e-8ab0-d9f7e932f845)
+5. To switch between Firefox and Chrome browsers to run tests on, change variable called "browser" to "ch" for Chrome or "ff" for Firefox within application.properties file
+![image](https://github.com/zagmax/combinedmodulesrepo/assets/45147763/411b5bbe-9969-4d5a-8991-d074c4589c25)
+6. Project logs are created with Log4j and saved within */target/logs/
+7. Projects testing reporting is executed by maven surefire.
+   1) Test reports file "surefire-report.html" located in */target/site/
+   2) file should open in browser and have similar look to attached example  
+    ![report](https://github.com/zagmax/combinedmodulesrepo/assets/45147763/87dff02d-8a79-4c7e-8ab0-d9f7e932f845)
+8. Next commands could be used in terminal within IDE in which this project is opened
+   1) mvn run - runs Maven build to go through all stages from clean start
+   2) mvn test - to run tests
+   3) mvn site - to create test report
+   Or also maven plugin could be used instead to select and run commands via simple double clicking 
+![image](https://github.com/zagmax/combinedmodulesrepo/assets/45147763/82d1273a-5f26-49cd-9216-9d237f7498df)
+  

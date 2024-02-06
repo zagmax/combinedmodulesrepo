@@ -1,31 +1,58 @@
------------------- READ ME ---------------------
-1. Projects scope is to perform WEB/API tests on such sites as
-   1) epam.com
+# Description
+This is a test project created as a final task for Test Automation course based on Java programming language using aquired knowledge during previous modules
+
+# Projects scope 
+Projects scope is creating framework with test cases and performing WEB and API tests on next sites: 
+   1) https://epam.com
    2) https://demowebshop.tricentis.com
    3) https://petstore.swagger.io/v2/
-2. For tests creation and running were used
+
+# Test cases 
+For tests creation and running were used
    1)junit-jupiter
    2)selenium
    3)rest-assured
-3. Classes that contain tests are located in  */test/java/Tasks/
-4. Support classes that contain webpage elements locators for web tests located in */test/java/pages/
-5. To switch between Firefox and Chrome browsers to run tests on, change variable called "browser" to "ch" for Chrome or "ff" for Firefox within application.properties file
+   
+# Project structure
+## Classes 
+Classes with test cases located in "*/test/java/Tasks/", among those are:
+-TaskOneTests - contains tests for epam.com site
+-TaskTwoTests - contains tests for demowebshop.com site
+-TaskThreeTests - contains API tests for petstore.swagger.io
 
-![image](https://github.com/zagmax/combinedmodulesrepo/assets/45147763/411b5bbe-9969-4d5a-8991-d074c4589c25)
+Support classes are located in "*/test/java/manager/" :
+-PageFactoryManager - responsible for creating instances of page objects
+-PropertyManager - handles file with properties, needed for tests to work and customize 
 
-6. For tests that require downloading files, directory for those files to be downloaded to should be changed in application.properties file according to user preferences 
+Page classes with methods and locators are located in "*/test/java/pages/" :
+-CorePage - contains basic methods usable for any site
+-DemoWebShopPage, DemoWebCheckout - contains locators and methods for demo webshop site 
+-EpamPages - contains methods and locators for epam site
 
-![image](https://github.com/zagmax/combinedmodulesrepo/assets/45147763/589572e6-c8ec-4dbb-a102-12e9641abe40)
+## Resources
+Resources contains two files:
+-application.properies - file contains variables like links and settings for easier test case adaptation and increase code readability
+-log4j2.xml - file contains configuration for logging
 
-7. Project logs are created with Log4j and saved within */target/logs/
-8. Projects testing reporting is executed by maven surefire.
-   1) Test reports file "surefire-report.html" located in */target/site/
-   2) file should open in browser and have similar look to attached example  
-    ![report](https://github.com/zagmax/combinedmodulesrepo/assets/45147763/87dff02d-8a79-4c7e-8ab0-d9f7e932f845)
-9. Next commands could be used in terminal within IDE in which this project is opened
-   1) mvn run - runs Maven build to go through all stages from clean start
-   2) mvn test - to run tests
-   3) mvn site - to create test report
+# Usage
+## Setup and configuration  
+- To switch between Firefox and Chrome browsers to run tests on, change variable called "browser" to "ch" for Chrome or "ff" for Firefox within application.properties file
+- For tests that require downloading a file, set a path where files would be saved to by changing "downloadPath" variable
 
-   Or also maven plugin could be used instead to select and run commands via simple double clicking 
-![image](https://github.com/zagmax/combinedmodulesrepo/assets/45147763/82d1273a-5f26-49cd-9216-9d237f7498df)
+## Test running
+Open project within IDE and in the terminal send such commands:
+1) mvn test - to run all tests in project
+2) mvn -Dtest=* test - to run tests in specific classes, where '*' should be replaced by name of the class (e.g. "mvn -Dtest=TaskThreeTests test")
+
+## Reporting
+Projects testing reporting is executed by maven surefire. 
+To generate report send in IDE terminal next command: mvn site
+After site is done report file "surefire-report.html" could be found in "*/target/site/" and for visualization could be opened in any browser 
+( looks as follows )
+![report](https://github.com/zagmax/combinedmodulesrepo/assets/45147763/87dff02d-8a79-4c7e-8ab0-d9f7e932f845)
+
+## Logging 
+Project logs are created with Log4j and saved within "*/target/logs/"
+Generated file appTest.log could be opened for investigation of any occured issues 
+
+   

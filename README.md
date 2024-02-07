@@ -15,23 +15,27 @@ For tests creation and running were used
    
 # Project structure
 ## Test Classes 
+
 Located in "*/test/java/Tasks/", among those are:
 -TaskOneTests - contains tests for epam.com site
 -TaskTwoTests - contains tests for demowebshop.com site
 -TaskThreeTests - contains API tests for petstore.swagger.io
 
 ## Support classes 
+
 Located in "*/test/java/manager/" :
 -PageFactoryManager - responsible for creating instances of page objects
 -PropertyManager - handles file with properties, needed for tests to work and customize 
 
 ## Page classes 
+
 Contain methods and locators, located in "*/test/java/pages/" :
 -CorePage - contains basic methods usable for any site
 -DemoWebShopPage, DemoWebCheckout - contains locators and methods for demo webshop site 
 -EpamPages - contains methods and locators for epam site
 
 ## Resources
+
 Resources contains two files:
 -application.properies - file contains variables like links and settings for easier test case adaptation and increase code readability
 -log4j2.xml - file contains configuration for logging

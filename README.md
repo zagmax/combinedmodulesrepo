@@ -14,17 +14,19 @@ For tests creation and running were used
    3)rest-assured
    
 # Project structure
-## Classes 
-Classes with test cases located in "*/test/java/Tasks/", among those are:
+## Test Classes 
+Located in "*/test/java/Tasks/", among those are:
 -TaskOneTests - contains tests for epam.com site
 -TaskTwoTests - contains tests for demowebshop.com site
 -TaskThreeTests - contains API tests for petstore.swagger.io
 
-Support classes are located in "*/test/java/manager/" :
+## Support classes 
+Located in "*/test/java/manager/" :
 -PageFactoryManager - responsible for creating instances of page objects
 -PropertyManager - handles file with properties, needed for tests to work and customize 
 
-Page classes with methods and locators are located in "*/test/java/pages/" :
+## Page classes 
+Contain methods and locators, located in "*/test/java/pages/" :
 -CorePage - contains basic methods usable for any site
 -DemoWebShopPage, DemoWebCheckout - contains locators and methods for demo webshop site 
 -EpamPages - contains methods and locators for epam site
@@ -44,15 +46,18 @@ Open project within IDE and in the terminal send such commands:
 1) mvn test - to run all tests in project
 2) mvn -Dtest=* test - to run tests in specific classes, where '*' should be replaced by name of the class (e.g. "mvn -Dtest=TaskThreeTests test")
 
+## Logging 
+Project logs are created with Log4j and saved within "*/target/logs/"
+Generated file appTest.log could be opened for investigation of any occured issues 
+
 ## Reporting
 Projects testing reporting is executed by maven surefire. 
-To generate report send in IDE terminal next command: mvn site
+To generate report send in IDE terminal next command: 
+- mvn site
 After site is done report file "surefire-report.html" could be found in "*/target/site/" and for visualization could be opened in any browser 
 ( looks as follows )
 ![report](https://github.com/zagmax/combinedmodulesrepo/assets/45147763/87dff02d-8a79-4c7e-8ab0-d9f7e932f845)
 
-## Logging 
-Project logs are created with Log4j and saved within "*/target/logs/"
-Generated file appTest.log could be opened for investigation of any occured issues 
+
 
    

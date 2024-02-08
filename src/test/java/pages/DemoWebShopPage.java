@@ -1,5 +1,7 @@
 package pages;
 
+import lombok.extern.log4j.Log4j2;
+import net.bytebuddy.utility.RandomString;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -7,11 +9,12 @@ import org.openqa.selenium.support.PageFactory;
 
 import java.util.List;
 
+@Log4j2
 public class DemoWebShopPage {
 
 
     public DemoWebShopPage(WebDriver driver) {
-        //this.driver = driver;
+        log.info("initializing demo web shop page instance");
         PageFactory.initElements(driver, this);
     }
 
@@ -98,28 +101,42 @@ public class DemoWebShopPage {
     @FindBy(css = "[class=order-summary-content]")
     private WebElement cartSummary;
 
-    public WebElement getCartSummary() {
-        return cartSummary;
+    public boolean checkCartSummaryContains(String str) {
+        return cartSummary.getText().contains(str);
     }
 
-    public WebElement getItemQuantityField() {
-        return itemQuantityField;
+    public void setItemQuantityField(String amount) {
+        log.info("setting item quantity");
+        itemQuantityField.clear();
+        itemQuantityField.sendKeys(amount);
     }
 
-    public WebElement getUpdateCardButton() {
-        return updateCardButton;
+    public void clickUpdateCardButton() {
+        updateCardButton.click();
     }
 
-    public WebElement getWishlistLink() {
-        return wishlistLink;
+    public void clickWishlistLink() {
+        log.info("click add to wishlist");
+        wishlistLink.click();
     }
 
-    public WebElement getHeaderCartLink() {
-        return headerCartLink;
+    public boolean checkIfItemAdded(String product){
+        log.info("checking if item added to cart");
+        for (WebElement item : getWishlistCartItems()) {
+            if (item.getAttribute("innerText").equals(product)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public void clickHeaderCartLink() {
+        log.info("clicking cart button");
+        headerCartLink.click();
     }
 
-    public WebElement getAddToCartButton() {
-        return addToCartButton;
+    public void clickAddToCartButton() {
+        log.info("clicking add to cart button");
+        addToCartButton.click();
     }
 
     public List<WebElement> getBasketItems() {
@@ -134,12 +151,12 @@ public class DemoWebShopPage {
         return sortOptionsSorting;
     }
 
-    public WebElement getProductTitle() {
-        return productTitle;
+    public String getProductTitle() {
+        return productTitle.getText();
     }
 
-    public WebElement getAddToWishlistButton() {
-        return addToWishlistButton;
+    public void clickAddToWishlistButton() {
+        addToWishlistButton.click();
     }
 
     public List<WebElement> getProductList() {
@@ -149,7 +166,11 @@ public class DemoWebShopPage {
     public WebElement getPagesizeDropdown() {
         return pagesizeDropdown;
     }
-
+    public void selectPageSize(int size){
+        log.info("changing amount of products shown");
+        getPagesizeDropdown().click();
+        getSortOptionsProductAmount().get(size).click();
+    }
     public List<WebElement> getSortOptionsProductAmount() {
         return sortOptionsProductAmount;
     }
@@ -165,27 +186,73 @@ public class DemoWebShopPage {
     public WebElement getOrderByDropdown() {
         return orderByDropdown;
     }
-
+    public void selectOrderBySort(int num){
+        log.info("select order by sort");
+        getOrderByDropdown().click();
+        getSortOptionsSorting().get(num).click();
+    }
+    public boolean checkSortingOrder(String direction){
+        log.info("checking sort by "+direction+" price");
+        for (int i = 0; i < getPriceList().size() - 1; i++) {
+            if(direction.equals("asc")&&Integer.parseInt(getPriceList().get(i).getText()) < Integer.parseInt(getPriceList().get(i + 1).getText())){
+                return false;
+            }
+            if(direction.equals("desc")&&Integer.parseInt(getPriceList().get(i).getText()) > Integer.parseInt(getPriceList().get(i + 1).getText())){
+                return false;
+            }
+        }
+        return true;
+    }
     public WebElement getLoginButton() {
         return loginButton;
     }
 
     public void clickGenderRadioButton() {
+        log.info("click gender radiobtn");
         genderRadioButton.click();
     }
 
     public WebElement getFirstNameField() {
         return firstNameField;
     }
-
-    public WebElement getRegistrationCompleteTitle() {
-        return registrationCompleteTitle;
+    public void fillRegistrationFields(){
+        log.info("filling fields for registration");
+        String mailName = RandomString.make(5);
+        getFirstNameField().sendKeys("asdasd");
+        getLastNameField().sendKeys("asdasd");
+        getEmailField().sendKeys(mailName + "@mail.mail");
+        getPasswordField().sendKeys("asdasd");
+        getPasswordFieldConfirm().sendKeys("asdasd");
     }
 
-    public WebElement getProfileLink() {
-        return profileLink;
+    public boolean isRegistrationCompleteTitleShown() {
+        log.info("check registration completion");
+        return registrationCompleteTitle.isDisplayed();
+    }
+    public void loginToDemoWebShop(){
+        log.info("logging in with credentials");
+        getEmailField().sendKeys("asdasd@asd.asdasd");
+        getPasswordField().sendKeys("asdasd");
+        getLoginButton().click();
     }
 
+    public boolean isProfileLinkShown() {
+        log.info("check display of profile link button");
+        return profileLink.isDisplayed();
+    }
+    public int checkSubcategoryList(String[] list){
+        log.info("checking subcategory list");
+        int count = 0;
+        for (WebElement el : getSubCategoryList()) {
+            for (String str : list) {
+                if (el.getText().equals(str)) {
+                    count++;
+                    break;
+                }
+            }
+        }
+        return count;
+    }
     public WebElement getLastNameField() {
         return lastNameField;
     }
@@ -202,8 +269,9 @@ public class DemoWebShopPage {
         return passwordFieldConfirm;
     }
 
-    public WebElement getRegistrationSubmit() {
-        return registrationSubmit;
+    public void clickRegistrationSubmit() {
+        log.info("clicking confirm btn");
+        registrationSubmit.click();
     }
 
 }

@@ -1,5 +1,6 @@
 package pages;
 
+import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -7,6 +8,7 @@ import org.openqa.selenium.support.PageFactory;
 
 import java.util.List;
 
+@Log4j2
 public class DemoShopCheckout {
     public DemoShopCheckout(WebDriver driver) {
         PageFactory.initElements(driver, this);
@@ -50,11 +52,24 @@ public class DemoShopCheckout {
 
     @FindBy(css = ".order-completed .title")
     private WebElement completedOrderTitle;
-
-    public WebElement getCompletedOrderTitle() {
-        return completedOrderTitle;
+    public void fillAddressSection(){
+        log.info("filling address section");
+        getCity().sendKeys("city");
+        getAddressOne().sendKeys("address");
+        getZipPost().sendKeys("010101");
+        getPhoneNumber().sendKeys("+499999999");
     }
 
+    public boolean isCompletedOrderTitleShown() {
+        log.info("checking display of order completion title");
+        return completedOrderTitle.isDisplayed();
+    }
+    public void goThroughCheckoutSections(CorePage corePage){
+        log.info("going through checkout billing sections");
+        for (int i = 0; i < 5; i++) {
+            corePage.clickWR(getContinueButtons().get(i));
+        }
+    }
     public List<WebElement> getContinueButtons() {
         return continueButtons;
     }

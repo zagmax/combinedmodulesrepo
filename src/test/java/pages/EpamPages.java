@@ -1,5 +1,7 @@
 package pages;
 
+import lombok.extern.log4j.Log4j2;
+import manager.PageFactoryManager;
 import manager.PropertyManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -10,9 +12,13 @@ import org.openqa.selenium.support.PageFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Properties;
 
+@Log4j2
 public class EpamPages {
     private final WebDriver driver;
+    private final Properties PROPERTIES = PageFactoryManager.getPROPERTIES();
 
     @FindBy(css = ".desktop-logo + .theme-switcher-ui > .theme-switcher")
     private WebElement switcher;
@@ -62,13 +68,15 @@ public class EpamPages {
     @FindBy(xpath = "//iframe[contains(@title,\"recaptcha\")]")
     private WebElement recapcha;
 
-    public WebElement getEpamLogo() {
-        return epamLogo;
+    public void clickEpamLogo() {
+        log.info("click epam logo");
+        epamLogo.click();
     }
 
 
-    public WebElement getRecapcha() {
-        return recapcha;
+    public boolean recapchaShown() {
+        log.info("recapcha shown");
+        return recapcha.isDisplayed();
     }
 
     public WebElement getDownloadButton() {
@@ -76,20 +84,33 @@ public class EpamPages {
     }
 
 
-    public WebElement getCheckboxValidation() {
-        return checkboxValidation;
+    public boolean checkboxValidationShown() {
+        log.info("checking checkbox being shown");
+        return checkboxValidation.isEnabled();
     }
 
     public WebElement getRequiredCheckbox() {
         return requiredCheckbox;
     }
 
+    public void clickCheckbox() {
+        log.info("clicking checkbox");
+        requiredCheckbox.click();
+    }
 
-    public WebElement getListValidation() {
-        return listValidation;
+    public void selectOptionFromFormDropdown(int number) {
+        log.info("selecting option from dropdown");
+        getListOfDropdownFields().get(2).click();
+        getDropdownsOptions().get(number).click();
+    }
+
+    public boolean checkListValidationShown() {
+        log.info("checking display of list");
+        return listValidation.isDisplayed();
     }
 
     public List<WebElement> getFormInputFields() {
+        log.info("gathering input fields list");
         List<WebElement> list = new ArrayList<>();
 
         list.add(driver.findElement(formInputFields).findElement(By.xpath("//*[@name=\"user_first_name\"]")));
@@ -98,6 +119,14 @@ public class EpamPages {
         list.add(driver.findElement(formInputFields).findElement(By.xpath("//*[@name=\"user_phone\"]")));
 
         return list;
+    }
+
+    public void fillFormTextFields() {
+        log.info("filling required text fields in \"about\" form");
+        getFormInputFields().get(0).sendKeys("Name");
+        getFormInputFields().get(1).sendKeys("Name");
+        getFormInputFields().get(2).sendKeys("Name@name.com");
+        getFormInputFields().get(3).sendKeys("+1111111");
     }
 
     public List<WebElement> getListOfDropdownFields() {
@@ -116,19 +145,22 @@ public class EpamPages {
     private final By polList = new By.ByCssSelector(".policies .fat-links");
     private final By languageList = new By.ByCssSelector(".location-selector__panel .location-selector__link");
 
-    public WebElement getSwitcherLabel() {
-        return switcherLabel;
-    }
-
     @FindBy(css = ".hamburger-menu__dropdown .theme-switcher-label")
     private WebElement switcherLabel;
 
     public EpamPages(WebDriver driver) {
+        log.info("initializing epamPage instance");
         this.driver = driver;
         PageFactory.initElements(driver, this);
     }
 
+    public String getSwitcherLabel() {
+        log.info("getting switcher label attribute");
+        return switcherLabel.getAttribute("innerText");
+    }
+
     public void getToContactsPage() {
+        log.info("open contact page");
         driver.get("https://www.epam.com/about/who-we-are/contact");
     }
 
@@ -140,11 +172,13 @@ public class EpamPages {
         return driver.findElements(articles);
     }
 
-    public WebElement getFormSubmitButton() {
-        return formSubmitButton;
+    public void clickFormSubmitButton() {
+        log.info("about page form submit button click");
+        formSubmitButton.click();
     }
 
     public List<WebElement> getLangList() {
+        log.info("get list of languages");
         return driver.findElements(languageList);
     }
 
@@ -156,43 +190,94 @@ public class EpamPages {
         return listOfRegions;
     }
 
-    public WebElement searchIcon() {
-        return searchIcon;
+    public void clickSearchIcon() {
+        log.info("clicking search icon");
+        searchIcon.click();
     }
 
-    public WebElement getSwitcherElement() {
-        return switcher;
+    public void clickSwitcherElement() {
+        log.info("clicking dark\"light switch");
+        switcher.click();
     }
 
-    public WebElement getCookieAccept() {
-        return cookieAccept;
-    }
-
-    public WebElement getAustraliaAPAC() {
-        return australiaCountryPlateAPAC;
+    public boolean isAustraliaAPACShown() {
+        log.info("check display of australia");
+        return australiaCountryPlateAPAC.isDisplayed();
     }
 
     public List<WebElement> getListOfValidationWarnings() {
         return listOfValidationWarnings;
     }
 
-    public WebElement getSearchConfirmBtn() {
-        return searchConfirmBtn;
+    public void clickSearchConfirmBtn() {
+        log.info("clicking confirm form button");
+        searchConfirmBtn.click();
     }
 
-    public WebElement getCanadaAmerica() {
-        return canadaCountryPlateAmerica;
+    public boolean isAllResultsHaveSearchedText() {
+        log.info("checking search results for presence of search text");
+        boolean result = true;
+        for (WebElement el : getListOfSearchResults()) {
+            if (!el.getText().contains(PROPERTIES.getProperty("searchQuerry"))) {
+                result = false;
+                break;
+            }
+        }
+        return result;
     }
 
-    public WebElement getArmeniaEMEA() {
-        return armeniaCountryPlateEMEA;
+    public boolean canadaAmericaShown() {
+        log.info("check Canada shown");
+        return canadaCountryPlateAmerica.isDisplayed();
     }
 
-    public WebElement getLangButton() {
-        return langButton;
+    public boolean isArmeniaEMEAShown() {
+        log.info("check armenia shown");
+        return armeniaCountryPlateEMEA.isDisplayed();
+    }
+
+    public void clickLangButton() {
+        log.info("click language select button");
+        langButton.click();
+    }
+
+    public boolean langButtonContainsText(String str) {
+        log.info("check language text");
+        return langButton.getAttribute("innerText").contains(str);
+    }
+
+    public void selectPageLanguage(String str) {
+        log.info("selecting language of page");
+        for (WebElement elem : getLangList()) {
+            if (Objects.equals(elem.getAttribute("lang"), str)) {
+                elem.click();
+                break;
+            }
+        }
+    }
+
+    public int areAllPolicyPresent(String[] policy, List<WebElement> actualPolicy) {
+        log.info("Policy list check method is called");
+        int count = -1;
+        boolean present;
+        for (int i = 0; i < policy.length; i++) {
+            present = false;
+            for (WebElement webElement : actualPolicy) {
+                if (webElement.getText().equals(policy[i])) {
+                    present = true;
+                    break;
+                }
+            }
+            if (!present) {
+                count = i;
+                break;
+            }
+        }
+        return count;
     }
 
     public void openHomePage() {
+        log.info("open hope page");
         try {
             driver.get(PropertyManager.getPropertiesInstance().getProperty("epamHome"));
         } catch (IOException e) {

@@ -1,5 +1,6 @@
 package manager;
 
+import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -12,11 +13,13 @@ import pages.DemoWebShopPage;
 import pages.EpamPages;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 
+@Log4j2
 public class PageFactoryManager {
     private static final Properties PROPERTIES;
 
@@ -34,7 +37,7 @@ public class PageFactoryManager {
     public PageFactoryManager() {
         switch (PROPERTIES.getProperty("browser")) {
             case "ch" -> {
-
+                log.info("creating Chrome driver");
                 Map<String, Object> prefs = new HashMap<>();
                 prefs.put("download.default_directory", PROPERTIES.getProperty("downloadPath"));
                 ChromeOptions options = new ChromeOptions();
@@ -42,7 +45,7 @@ public class PageFactoryManager {
                 driver = new ChromeDriver(options);
             }
             case "ff" -> {
-
+                log.info("creating Firefox driver");
                 FirefoxProfile fxProfile = new FirefoxProfile();
                 fxProfile.setPreference("browser.download.dir", PROPERTIES.getProperty("downloadPath"));
                 FirefoxOptions option = new FirefoxOptions();
@@ -52,7 +55,14 @@ public class PageFactoryManager {
         }
     }
 
+    public void browerConfiguration() {
+        log.info("setting browser");
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5L));
+    }
+
     public EpamPages getEpamHomePage() {
+        log.info("creating epam page instance");
         return new EpamPages(driver);
     }
 
@@ -60,20 +70,24 @@ public class PageFactoryManager {
         return PROPERTIES;
     }
 
-    public WebDriver getDriver() {
-        return driver;
-    }
-
     public CorePage getCorePage() {
+        log.info("creating corepage instance");
         return new CorePage(driver);
 
     }
 
+    public void browserClose() {
+        log.info("closing browser");
+        driver.close();
+    }
+
     public DemoWebShopPage getDemoWebShopPage() {
+        log.info("creating demo shop page instance");
         return new DemoWebShopPage(driver);
     }
 
     public DemoShopCheckout getDemoShopCheckout() {
+        log.info("creating demo shop checkout page instance");
         return new DemoShopCheckout(driver);
     }
 }

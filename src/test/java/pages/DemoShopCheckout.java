@@ -9,8 +9,9 @@ import org.openqa.selenium.support.PageFactory;
 import java.util.List;
 
 @Log4j2
-public class DemoShopCheckout {
+public class DemoShopCheckout extends DemoWebShopPage{
     public DemoShopCheckout(WebDriver driver) {
+        super(driver);
         PageFactory.initElements(driver, this);
     }
 
@@ -68,11 +69,24 @@ public class DemoShopCheckout {
         return completedOrderTitle.isDisplayed();
     }
 
-    public void goThroughCheckoutSections(CorePage corePage){
+    public void goThroughCheckoutSections(){
         log.info("going through checkout billing sections");
         for (int i = 0; i < 5; i++) {
-            corePage.clickWR(getContinueButtons().get(i));
+            clickWR(getContinueButtons().get(i));
         }
+    }
+    public void finishCheckoutFlow(){
+        log.info("completing checkout with no extra additions");
+        clickWR(getTermsOfServiceCheckbox());
+        clickWR(getCheckoutButton());
+        clickWR(getAddressSelect());
+        clickWR(getNewAddress());
+        clickWR(getCountriesListDropdown());
+        clickWR(getListOfCountries().get(1));
+        fillAddressSection();
+        goThroughCheckoutSections();
+        clickWR(getSubmitCheckoutButton());
+        waitForPageLoadComplete();
     }
     public List<WebElement> getContinueButtons() {
         return continueButtons;

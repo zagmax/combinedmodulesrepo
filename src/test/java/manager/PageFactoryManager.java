@@ -33,7 +33,7 @@ public class PageFactoryManager {
     private final WebDriver driver;
 
     public PageFactoryManager() {
-        if ("firefox".equals((System.getProperty("browser") == null ? "" : System.getProperty("browser")))) {
+        if ("firefox".equals(System.getProperty("browser"))) {
             log.info("creating Firefox driver");
             WebDriverManager.firefoxdriver().setup();
             FirefoxProfile fxProfile = new FirefoxProfile();

@@ -42,13 +42,18 @@ Resources contains two files:
 
 # Usage
 ## Setup and configuration  
-- To switch between Firefox and Chrome browsers to run tests on, change variable called "browser" to "ch" for Chrome or "ff" for Firefox within application.properties file
 - For tests that require downloading a file, set a path where files would be saved to by changing "downloadPath" variable
 
 ## Test running
-Open project within IDE and in the terminal send such commands:
-1) mvn test - to run all tests in project
-2) mvn -Dtest=* test - to run tests in specific classes, where '*' should be replaced by name of the class (e.g. "mvn -Dtest=TaskThreeTests test")
+To run testing send next command within IDE terminal in which project is opened:
+- mvn test => this command will run all tests on Chrome browser
+
+## Parameters
+- -Dtest=* => where "*" is the name of test class to include in testing (e.g. -Dtest=TaskOneTests)
+- -Dbrowser=* => where "*" is the name of browser to run tests on. Currently supported browsers are Chrome(run by default if no parameter sent) and Firefox "-Dbrowser=firefox"
+
+For more complex command structures please check out maven documentation:
+https://maven.apache.org/surefire/maven-surefire-plugin/examples/single-test.html 
 
 ## Logging 
 Project logs are created with Log4j and saved within "*/target/logs/"

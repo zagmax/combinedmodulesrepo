@@ -9,7 +9,7 @@ import org.openqa.selenium.support.PageFactory;
 import java.util.List;
 
 @Log4j2
-public class DemoShopCheckout extends DemoWebShopPage{
+public class DemoShopCheckout extends DemoWebShopPage {
     public DemoShopCheckout(WebDriver driver) {
         super(driver);
         PageFactory.initElements(driver, this);
@@ -57,85 +57,31 @@ public class DemoShopCheckout extends DemoWebShopPage{
     @FindBy(css = ".order-completed .title")
     private WebElement completedOrderTitle;
 
-    public void fillAddressSection(){
-        log.info("filling address section");
-        getCity().sendKeys("city");
-        getAddressOne().sendKeys("address");
-        getZipPost().sendKeys("010101");
-        getPhoneNumber().sendKeys("+499999999");
-    }
     public boolean isCompletedOrderTitleShown() {
         log.info("checking display of order completion title");
         return completedOrderTitle.isDisplayed();
     }
 
-    public void goThroughCheckoutSections(){
+    public void finishCheckoutFlow() {
+        log.info("completing checkout with no extra additions");
+        clickWR(termsOfServiceCheckbox);
+        clickWR(checkoutButton);
+        clickWR(addressSelect);
+        clickWR(newAddress);
+        clickWR(countriesListDropdown);
+        clickWR(listOfCountries.get(1));
+
+        log.info("filling address section");
+        city.sendKeys("city");
+        addressOne.sendKeys("address");
+        zipPost.sendKeys("010101");
+        phoneNumber.sendKeys("+499999999");
+
         log.info("going through checkout billing sections");
         for (int i = 0; i < 5; i++) {
-            clickWR(getContinueButtons().get(i));
+            clickWR(continueButtons.get(i));
         }
-    }
-    public void finishCheckoutFlow(){
-        log.info("completing checkout with no extra additions");
-        clickWR(getTermsOfServiceCheckbox());
-        clickWR(getCheckoutButton());
-        clickWR(getAddressSelect());
-        clickWR(getNewAddress());
-        clickWR(getCountriesListDropdown());
-        clickWR(getListOfCountries().get(1));
-        fillAddressSection();
-        goThroughCheckoutSections();
-        clickWR(getSubmitCheckoutButton());
+        clickWR(submitCheckoutButton);
         waitForPageLoadComplete();
-    }
-    public List<WebElement> getContinueButtons() {
-        return continueButtons;
-    }
-    public WebElement getSubmitCheckoutButton() {
-        return submitCheckoutButton;
-    }
-
-    public WebElement getAddressSelect() {
-        return addressSelect;
-    }
-
-    public List<WebElement> getListOfAddresses() {
-        return listOfAddresses;
-    }
-
-    public WebElement getCountriesListDropdown() {
-        return countriesListDropdown;
-    }
-
-    public WebElement getNewAddress() {
-        return newAddress;
-    }
-
-    public List<WebElement> getListOfCountries() {
-        return listOfCountries;
-    }
-
-    public WebElement getCheckoutButton() {
-        return checkoutButton;
-    }
-
-    public WebElement getTermsOfServiceCheckbox() {
-        return termsOfServiceCheckbox;
-    }
-
-    public WebElement getCity() {
-        return city;
-    }
-
-    public WebElement getAddressOne() {
-        return addressOne;
-    }
-
-    public WebElement getZipPost() {
-        return zipPost;
-    }
-
-    public WebElement getPhoneNumber() {
-        return phoneNumber;
     }
 }

@@ -66,8 +66,18 @@ public class EpamPages extends CorePage {
     @FindBy(css = "[class=checkbox] .checkbox__holder")
     private WebElement requiredCheckbox;
 
+    @FindBy(css = ".hamburger-menu__dropdown .theme-switcher-label")
+    private WebElement switcherLabel;
     @FindBy(xpath = "//iframe[contains(@title,\"recaptcha\")]")
     private WebElement recapcha;
+
+    private final By listOfDropdownFields = By.xpath("//*[@class=\"dropdown-list\"]//*[contains(@role,\"combobox\")]");
+    private final By dropdownsOptions = By.xpath("//*[@class=\"select2-results\"]//*[@role=\"option\"]");
+    private final By formInputFields = By.xpath("//*[@class=\"layout-box\"]//*[@class=\"colctrl__holder\"]");
+    private final By articles = By.xpath("//article[@class=\"search-results__item\"]");
+    private final By polList = new By.ByCssSelector(".policies .fat-links");
+    private final By languageList = new By.ByCssSelector(".location-selector__panel .location-selector__link");
+
 
     public void clickEpamLogo() {
         log.info("click epam logo");
@@ -75,35 +85,14 @@ public class EpamPages extends CorePage {
         waitForPageLoadComplete();
     }
 
-
     public boolean recapchaShown() {
         log.info("recapcha shown");
         return recapcha.isDisplayed();
     }
 
-    public WebElement getDownloadButton() {
-        return downloadButton;
-    }
-
-
     public boolean checkboxValidationShown() {
         log.info("checking checkbox being shown");
         return checkboxValidation.isEnabled();
-    }
-
-    public WebElement getRequiredCheckbox() {
-        return requiredCheckbox;
-    }
-
-    public void clickCheckbox() {
-        log.info("clicking checkbox");
-        requiredCheckbox.click();
-    }
-
-    public void selectOptionFromFormDropdown(int number) {
-        log.info("selecting option from dropdown");
-        getListOfDropdownFields().get(2).click();
-        getDropdownsOptions().get(number).click();
     }
 
     public boolean checkListValidationShown() {
@@ -130,33 +119,18 @@ public class EpamPages extends CorePage {
         getFormInputFields().get(2).sendKeys("Name@name.com");
         getFormInputFields().get(3).sendKeys("+1111111");
 
-        scrollToElement(getRequiredCheckbox());
+        scrollToElement(requiredCheckbox);
         scrollForSetAmount("-300");
-        clickCheckbox();
-        selectOptionFromFormDropdown(0);
+        log.info("clicking checkbox");
+        requiredCheckbox.click();
+        log.info("selecting option from dropdown");
+        driver.findElements(listOfDropdownFields).get(2).click();
+        driver.findElements(dropdownsOptions).get(0).click();
         scrollForSetAmount("300");
-        clickFormSubmitButton();
+        log.info("about page form submit button click");
+        formSubmitButton.click();
         waitForPageLoadComplete();
     }
-
-    public List<WebElement> getListOfDropdownFields() {
-        return driver.findElements(listOfDropdownFields);
-    }
-
-    public List<WebElement> getDropdownsOptions() {
-        return driver.findElements(dropdownsOptions);
-    }
-
-    private final By listOfDropdownFields = By.xpath("//*[@class=\"dropdown-list\"]//*[contains(@role,\"combobox\")]");
-
-    private final By dropdownsOptions = By.xpath("//*[@class=\"select2-results\"]//*[@role=\"option\"]");
-    private final By formInputFields = By.xpath("//*[@class=\"layout-box\"]//*[@class=\"colctrl__holder\"]");
-    private final By articles = By.xpath("//article[@class=\"search-results__item\"]");
-    private final By polList = new By.ByCssSelector(".policies .fat-links");
-    private final By languageList = new By.ByCssSelector(".location-selector__panel .location-selector__link");
-
-    @FindBy(css = ".hamburger-menu__dropdown .theme-switcher-label")
-    private WebElement switcherLabel;
 
     public EpamPages(WebDriver driver) {
         super(driver);
@@ -170,35 +144,22 @@ public class EpamPages extends CorePage {
         return switcherLabel.getAttribute("innerText");
     }
 
-    public WebElement getSearchField() {
-        return searchField;
-    }
-
     public List<WebElement> getListOfSearchResults() {
         return driver.findElements(articles);
     }
 
-    public void clickFormSubmitButton() {
-        log.info("about page form submit button click");
-        formSubmitButton.click();
-    }
-
-    public List<WebElement> getLangList() {
-        log.info("get list of languages");
-        return driver.findElements(languageList);
-    }
-
     public void downloadEpamFile() {
         log.info("click on download for EPAM file");
-        scrollToElement(getDownloadButton());
-        clickOnElementWithJS(getDownloadButton());
+        scrollToElement(downloadButton);
+        clickOnElementWithJS(downloadButton);
     }
 
     public void clickSumbitFormWithEmptyFields() {
         log.info("open contacts page and click submit form");
         openPage(PROPERTIES.getProperty("epamContacts"));
         scrollForSetAmount("2200");
-        clickFormSubmitButton();
+        log.info("about page form submit button click");
+        formSubmitButton.click();
     }
 
     public List<String> getPolicyList() {
@@ -210,16 +171,13 @@ public class EpamPages extends CorePage {
         return listOfRegions;
     }
 
-    public void clickSearchIcon() {
-        log.info("clicking search icon");
-        searchIcon.click();
-    }
-
     public void startASearch(String str) {
         log.info("executing a search");
-        clickSearchIcon();
-        getSearchField().sendKeys(str);
-        clickSearchConfirmBtn();
+        log.info("clicking search icon");
+        searchIcon.click();
+        searchField.sendKeys(str);
+        log.info("clicking confirm form button");
+        searchConfirmBtn.click();
         waitForPageLoadComplete();
     }
 
@@ -235,11 +193,6 @@ public class EpamPages extends CorePage {
 
     public List<WebElement> getListOfValidationWarnings() {
         return listOfValidationWarnings;
-    }
-
-    public void clickSearchConfirmBtn() {
-        log.info("clicking confirm form button");
-        searchConfirmBtn.click();
     }
 
     public boolean isAllResultsHaveSearchedText() {
@@ -264,20 +217,16 @@ public class EpamPages extends CorePage {
         return armeniaCountryPlateEMEA.isDisplayed();
     }
 
-    public void clickLangButton() {
-        log.info("click language select button");
-        langButton.click();
-    }
-
     public boolean langButtonContainsText(String str) {
         log.info("check language text");
         return langButton.getAttribute("innerText").contains(str);
     }
 
     public void selectPageLanguage(String str) {
+        log.info("click language select button");
+        langButton.click();
         log.info("selecting language of page");
-        clickLangButton();
-        for (WebElement elem : getLangList()) {
+        for (WebElement elem : driver.findElements(languageList)) {
             if (Objects.equals(elem.getAttribute("lang"), str)) {
                 elem.click();
                 break;

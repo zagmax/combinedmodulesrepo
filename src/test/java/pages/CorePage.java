@@ -63,9 +63,10 @@ public class CorePage {
     @Description("Click on element when its clickable. WR - \"when ready\"")
     public void waitFile(File file) {
         log.info("waiting for file to appear");
-        FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver).withTimeout(Duration.ofSeconds(25)).pollingEvery(Duration.ofMillis(100));
-        wait.until( x -> file.exists());
+        FluentWait<WebDriver> wait = new FluentWait<>(driver).withTimeout(Duration.ofSeconds(25)).pollingEvery(Duration.ofMillis(100));
+        wait.until(x -> file.exists());
     }
+
     public void scrollToElement(WebElement el) {
         log.info("scrolling to the " + el + " element");
         js.executeScript("arguments[0].scrollIntoView();", el);

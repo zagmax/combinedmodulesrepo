@@ -27,7 +27,6 @@ public class TaskOneTests {
         log.info("Next Test initiated");
         pageFactoryManager = new PageFactoryManager();
         epamPages = pageFactoryManager.getEpamHomePage();
-        pageFactoryManager.browerConfiguration();
         epamPages.openHomePage();
     }
 
@@ -66,7 +65,7 @@ public class TaskOneTests {
     @DisplayName("4. Check policies List")
     public void checkPoliciesList() {
         List<String> policy = Arrays.asList("INVESTORS", "OPEN SOURCE", "PRIVACY POLICY", "COOKIE POLICY", "APPLICANT PRIVACY NOTICE", "WEB ACCESSIBILITY");
-        Assertions.assertEquals(policy,(epamPages.getPolicyList()), "Some policies are missing on footer or have incorrect text");
+        Assertions.assertEquals(policy, (epamPages.getPolicyList()), "Some policies are missing on footer or have incorrect text");
         log.info("policy list test executed");
     }
 

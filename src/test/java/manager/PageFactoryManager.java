@@ -8,7 +8,6 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import pages.CorePage;
 import pages.DemoShopCheckout;
 import pages.DemoWebShopPage;
 import pages.EpamPages;
@@ -31,34 +30,26 @@ public class PageFactoryManager {
             throw new RuntimeException(e);
         }
     }
-
-
-    private WebDriver driver;
+    private final WebDriver driver;
 
     public PageFactoryManager() {
-        switch (PROPERTIES.getProperty("browser")) {
-            case "ch" -> {
-                log.info("creating Chrome driver");
-                WebDriverManager.chromedriver().setup();
-                Map<String, Object> prefs = new HashMap<>();
-                prefs.put("download.default_directory", PROPERTIES.getProperty("downloadPath"));
-                ChromeOptions options = new ChromeOptions();
-                options.setExperimentalOption("prefs", prefs);
-                driver = new ChromeDriver(options);
-            }
-            case "ff" -> {
-                log.info("creating Firefox driver");
-                WebDriverManager.firefoxdriver().setup();
-                FirefoxProfile fxProfile = new FirefoxProfile();
-                fxProfile.setPreference("browser.download.dir", PROPERTIES.getProperty("downloadPath"));
-                FirefoxOptions option = new FirefoxOptions();
-                option.setProfile(fxProfile);
-                driver = new FirefoxDriver(option);
-            }
+        if ("firefox".equals((System.getProperty("browser") == null ? "" : System.getProperty("browser")))) {
+            log.info("creating Firefox driver");
+            WebDriverManager.firefoxdriver().setup();
+            FirefoxProfile fxProfile = new FirefoxProfile();
+            fxProfile.setPreference("browser.download.dir", PROPERTIES.getProperty("downloadPath"));
+            FirefoxOptions option = new FirefoxOptions();
+            option.setProfile(fxProfile);
+            driver = new FirefoxDriver(option);
+        } else {
+            log.info("creating Chrome driver");
+            WebDriverManager.chromedriver().setup();
+            Map<String, Object> prefs = new HashMap<>();
+            prefs.put("download.default_directory", PROPERTIES.getProperty("downloadPath"));
+            ChromeOptions options = new ChromeOptions();
+            options.setExperimentalOption("prefs", prefs);
+            driver = new ChromeDriver(options);
         }
-    }
-
-    public void browerConfiguration() {
         log.info("setting browser");
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5L));
@@ -71,12 +62,6 @@ public class PageFactoryManager {
 
     public static Properties getPROPERTIES() {
         return PROPERTIES;
-    }
-
-    public CorePage getCorePage() {
-        log.info("creating corepage instance");
-        return new CorePage(driver);
-
     }
 
     public void browserClose() {

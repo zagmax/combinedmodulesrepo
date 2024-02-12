@@ -26,7 +26,6 @@ public class TaskTwoTests {
         log.info("Next Test initiated");
         pageFactoryManager = new PageFactoryManager();
         demoWebShopPage = pageFactoryManager.getDemoWebShopPage();
-        pageFactoryManager.browerConfiguration();
     }
 
     @AfterEach

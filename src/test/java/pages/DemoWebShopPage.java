@@ -118,6 +118,7 @@ public class DemoWebShopPage extends CorePage {
         updateCartButton.click();
         waitForPageLoadComplete();
     }
+
     public void emptyBasket() {
         log.info("emptying basket");
         setItemQuantityField("0");
@@ -125,22 +126,23 @@ public class DemoWebShopPage extends CorePage {
         waitForPageLoadComplete();
     }
 
-        public void openWishlists() {
+    public void openWishlists() {
         log.info("click add to wishlist");
         wishlistLink.click();
         waitForPageLoadComplete();
         refresh();
     }
 
-    public boolean checkIfItemAdded(String product){
+    public boolean checkIfItemAdded(String product) {
         log.info("checking if item added to cart");
-        for (WebElement item : getWishlistCartItems()) {
+        for (WebElement item : wishlistCartItems) {
             if (item.getAttribute("innerText").equals(product)) {
                 return true;
             }
         }
         return false;
     }
+
     public void openBasket() {
         log.info("clicking cart button");
         headerCartLink.click();
@@ -151,18 +153,6 @@ public class DemoWebShopPage extends CorePage {
     public void addToCart() {
         log.info("clicking add to cart button");
         addToCartButton.click();
-    }
-
-    public List<WebElement> getBasketItems() {
-        return basketItems;
-    }
-
-    public List<WebElement> getWishlistCartItems() {
-        return wishlistCartItems;
-    }
-
-    public List<WebElement> getSortOptionsSorting() {
-        return sortOptionsSorting;
     }
 
     public String getProductTitle() {
@@ -177,85 +167,64 @@ public class DemoWebShopPage extends CorePage {
         return productList;
     }
 
-    public WebElement getPagesizeDropdown() {
-        return pagesizeDropdown;
-    }
-    public void selectPageSize(int size){
+    public void selectPageSize(int size) {
         log.info("changing amount of products shown");
-        getPagesizeDropdown().click();
-        getSortOptionsProductAmount().get(size).click();
+        pagesizeDropdown.click();
+        sortOptionsProductAmount.get(size).click();
         waitForPageLoadComplete();
-    }
-    public List<WebElement> getSortOptionsProductAmount() {
-        return sortOptionsProductAmount;
     }
 
     public List<WebElement> getPriceList() {
         return priceList;
     }
 
-    public List<WebElement> getSubCategoryList() {
-        return subCategoryList;
-    }
-
-    public WebElement getOrderByDropdown() {
-        return orderByDropdown;
-    }
-    public void selectOrderBySort(int num){
+    public void selectOrderBySort(int num) {
         log.info("select order by sort");
-        getOrderByDropdown().click();
-        getSortOptionsSorting().get(num).click();
+        orderByDropdown.click();
+        sortOptionsSorting.get(num).click();
         waitForPageLoadComplete();
     }
-    public boolean checkSortingOrder(String direction){
-        log.info("checking sort by "+direction+" price");
+
+    public boolean checkSortingOrder(String direction) {
+        log.info("checking sort by " + direction + " price");
         for (int i = 0; i < getPriceList().size() - 1; i++) {
-            if(direction.equals("asc")&&Integer.parseInt(getPriceList().get(i).getText()) < Integer.parseInt(getPriceList().get(i + 1).getText())){
+            if (direction.equals("asc") && Integer.parseInt(getPriceList().get(i).getText()) < Integer.parseInt(getPriceList().get(i + 1).getText())) {
                 return false;
             }
-            if(direction.equals("desc")&&Integer.parseInt(getPriceList().get(i).getText()) > Integer.parseInt(getPriceList().get(i + 1).getText())){
+            if (direction.equals("desc") && Integer.parseInt(getPriceList().get(i).getText()) > Integer.parseInt(getPriceList().get(i + 1).getText())) {
                 return false;
             }
         }
         return true;
     }
-    public WebElement getLoginButton() {
-        return loginButton;
-    }
 
-    public void clickGenderRadioButton() {
+    public void completeRegistration() {
         log.info("click gender radiobtn");
         genderRadioButton.click();
-    }
-    public void completeRegistration(){
-        clickGenderRadioButton();
-        fillRegistrationFields();
-        clickRegistrationSubmit();
-        waitForPageLoadComplete();
-    }
 
-    public WebElement getFirstNameField() {
-        return firstNameField;
-    }
-    public void fillRegistrationFields(){
         log.info("filling fields for registration");
         String mailName = RandomString.make(5);
-        getFirstNameField().sendKeys("asdasd");
-        getLastNameField().sendKeys("asdasd");
-        getEmailField().sendKeys(mailName + "@mail.mail");
-        getPasswordField().sendKeys("asdasd");
-        getPasswordFieldConfirm().sendKeys("asdasd");
+        firstNameField.sendKeys("asdasd");
+        lastNameField.sendKeys("asdasd");
+        emailField.sendKeys(mailName + "@mail.mail");
+        passwordField.sendKeys("asdasd");
+        passwordFieldConfirm.sendKeys("asdasd");
+
+        log.info("clicking confirm btn");
+        registrationSubmit.click();
+        waitForPageLoadComplete();
     }
 
     public boolean isRegistrationCompleteTitleShown() {
         log.info("check registration completion");
         return registrationCompleteTitle.isDisplayed();
     }
-    public void loginToDemoWebShop(){
+
+    public void loginToDemoWebShop() {
         log.info("logging in with credentials");
-        getEmailField().sendKeys("asdasd@asd.asdasd");
-        getPasswordField().sendKeys("asdasd");
-        getLoginButton().click();
+        emailField.sendKeys("asdasd@asd.asdasd");
+        passwordField.sendKeys("asdasd");
+        loginButton.click();
         waitForPageLoadComplete();
     }
 
@@ -263,29 +232,9 @@ public class DemoWebShopPage extends CorePage {
         log.info("check display of profile link button");
         return profileLink.isDisplayed();
     }
-    public boolean checkSubcategoryList(List<String> list){
+
+    public boolean checkSubcategoryList(List<String> list) {
         log.info("checking subcategory list");
         return subCategoryList.stream().map(WebElement::getText).collect(Collectors.toList()).containsAll(list);
     }
-    public WebElement getLastNameField() {
-        return lastNameField;
-    }
-
-    public WebElement getEmailField() {
-        return emailField;
-    }
-
-    public WebElement getPasswordField() {
-        return passwordField;
-    }
-
-    public WebElement getPasswordFieldConfirm() {
-        return passwordFieldConfirm;
-    }
-
-    public void clickRegistrationSubmit() {
-        log.info("clicking confirm btn");
-        registrationSubmit.click();
-    }
-
 }

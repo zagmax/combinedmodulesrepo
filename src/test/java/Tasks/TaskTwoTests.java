@@ -25,14 +25,6 @@ public class TaskTwoTests {
     private PageFactoryManager pageFactoryManager;
     private DemoWebShopPage demoWebShopPage;
 
-
-    @BeforeAll
-    public static void profileSetUp() {
-        log.info("setup browser drivers");
-        WebDriverManager.chromedriver().setup();
-        WebDriverManager.firefoxdriver().setup();
-    }
-
     @BeforeEach
     public void testsSetUp() {
         log.info("Next Test initiated");

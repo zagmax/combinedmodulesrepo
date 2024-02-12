@@ -1,5 +1,6 @@
 package manager;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -38,6 +39,7 @@ public class PageFactoryManager {
         switch (PROPERTIES.getProperty("browser")) {
             case "ch" -> {
                 log.info("creating Chrome driver");
+                WebDriverManager.chromedriver().setup();
                 Map<String, Object> prefs = new HashMap<>();
                 prefs.put("download.default_directory", PROPERTIES.getProperty("downloadPath"));
                 ChromeOptions options = new ChromeOptions();
@@ -46,6 +48,7 @@ public class PageFactoryManager {
             }
             case "ff" -> {
                 log.info("creating Firefox driver");
+                WebDriverManager.firefoxdriver().setup();
                 FirefoxProfile fxProfile = new FirefoxProfile();
                 fxProfile.setPreference("browser.download.dir", PROPERTIES.getProperty("downloadPath"));
                 FirefoxOptions option = new FirefoxOptions();

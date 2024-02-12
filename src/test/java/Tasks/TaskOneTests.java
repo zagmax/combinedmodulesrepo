@@ -26,12 +26,6 @@ public class TaskOneTests {
 
     private final Properties PROPERTIES = PageFactoryManager.getPROPERTIES();
 
-    @BeforeAll
-    public static void profileSetUp() {
-        WebDriverManager.chromedriver().setup();
-        WebDriverManager.firefoxdriver().setup();
-    }
-
     @BeforeEach
     public void testsSetUp() {
         log.info("Next Test initiated");

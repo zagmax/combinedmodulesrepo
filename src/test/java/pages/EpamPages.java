@@ -3,6 +3,7 @@ package pages;
 import lombok.extern.log4j.Log4j2;
 import manager.PageFactoryManager;
 import manager.PropertyManager;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -10,13 +11,15 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 @Log4j2
-public class EpamPages {
+public class EpamPages extends CorePage {
     private final WebDriver driver;
     private final Properties PROPERTIES = PageFactoryManager.getPROPERTIES();
 
@@ -71,6 +74,7 @@ public class EpamPages {
     public void clickEpamLogo() {
         log.info("click epam logo");
         epamLogo.click();
+        waitForPageLoadComplete();
     }
 
 
@@ -106,7 +110,7 @@ public class EpamPages {
 
     public boolean checkListValidationShown() {
         log.info("checking display of list");
-        return listValidation.isDisplayed();
+        return listValidation.isEnabled();
     }
 
     public List<WebElement> getFormInputFields() {
@@ -121,12 +125,20 @@ public class EpamPages {
         return list;
     }
 
-    public void fillFormTextFields() {
-        log.info("filling required text fields in \"about\" form");
+    public void fillContactForm() {
+        log.info("filling required fields in \"contact\" form");
         getFormInputFields().get(0).sendKeys("Name");
         getFormInputFields().get(1).sendKeys("Name");
         getFormInputFields().get(2).sendKeys("Name@name.com");
         getFormInputFields().get(3).sendKeys("+1111111");
+
+        scrollToElement(getRequiredCheckbox());
+        scrollForSetAmount("-300");
+        clickCheckbox();
+        selectOptionFromFormDropdown(0);
+        scrollForSetAmount("300");
+        clickFormSubmitButton();
+        waitForPageLoadComplete();
     }
 
     public List<WebElement> getListOfDropdownFields() {
@@ -149,19 +161,15 @@ public class EpamPages {
     private WebElement switcherLabel;
 
     public EpamPages(WebDriver driver) {
-        log.info("initializing epamPage instance");
+        super(driver);
         this.driver = driver;
+        log.info("initializing epamPage instance");
         PageFactory.initElements(driver, this);
     }
 
     public String getSwitcherLabel() {
         log.info("getting switcher label attribute");
         return switcherLabel.getAttribute("innerText");
-    }
-
-    public void getToContactsPage() {
-        log.info("open contact page");
-        driver.get("https://www.epam.com/about/who-we-are/contact");
     }
 
     public WebElement getSearchField() {
@@ -182,8 +190,22 @@ public class EpamPages {
         return driver.findElements(languageList);
     }
 
-    public List<WebElement> getPolicyList() {
-        return driver.findElements(polList);
+    public void downloadEpamFile() {
+        log.info("click on download for EPAM file");
+        scrollToElement(getDownloadButton());
+        clickOnElementWithJS(getDownloadButton());
+    }
+
+    public void clickSumbitFormWithEmptyFields() {
+        log.info("open contacts page and click submit form");
+        openPage(PROPERTIES.getProperty("epamContacts"));
+        scrollForSetAmount("2200");
+        clickFormSubmitButton();
+    }
+
+    public List<String> getPolicyList() {
+        log.info("getting list of policies as list of strings");
+        return driver.findElements(polList).stream().map(WebElement::getText).collect(Collectors.toList());
     }
 
     public List<WebElement> getListOfRegions() {
@@ -193,6 +215,14 @@ public class EpamPages {
     public void clickSearchIcon() {
         log.info("clicking search icon");
         searchIcon.click();
+    }
+
+    public void startASearch(String str) {
+        log.info("executing a search");
+        clickSearchIcon();
+        getSearchField().sendKeys(str);
+        clickSearchConfirmBtn();
+        waitForPageLoadComplete();
     }
 
     public void clickSwitcherElement() {
@@ -248,40 +278,36 @@ public class EpamPages {
 
     public void selectPageLanguage(String str) {
         log.info("selecting language of page");
+        clickLangButton();
         for (WebElement elem : getLangList()) {
             if (Objects.equals(elem.getAttribute("lang"), str)) {
                 elem.click();
                 break;
             }
         }
+        waitForPageLoadComplete();
     }
-
-    public int areAllPolicyPresent(String[] policy, List<WebElement> actualPolicy) {
-        log.info("Policy list check method is called");
-        int count = -1;
-        boolean present;
-        for (int i = 0; i < policy.length; i++) {
-            present = false;
-            for (WebElement webElement : actualPolicy) {
-                if (webElement.getText().equals(policy[i])) {
-                    present = true;
-                    break;
-                }
-            }
-            if (!present) {
-                count = i;
-                break;
-            }
-        }
-        return count;
+    public void checkCountriesDisplay(){
+        log.info("checking display for various country regions selected");
+        scrollToElement(getListOfRegions().get(1));
+        scrollForSetAmount("-200");
+        Assertions.assertTrue(canadaAmericaShown(), "Canada is not displayed in America region list");
+        clickWR(getListOfRegions().get(1));
+        Assertions.assertTrue(isArmeniaEMEAShown(), "Armenia is not displayed in EMEA region list");
+        clickWR(getListOfRegions().get(2));
+        Assertions.assertTrue(isAustraliaAPACShown(), "Australia is not displayed in APAC region list");
+        clickWR(getListOfRegions().get(0));
+        Assertions.assertTrue(canadaAmericaShown(), "Canada is not displayed in America region list after switch back to America region");
     }
 
     public void openHomePage() {
         log.info("open hope page");
         try {
             driver.get(PropertyManager.getPropertiesInstance().getProperty("epamHome"));
+            waitForPageLoadComplete();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 }

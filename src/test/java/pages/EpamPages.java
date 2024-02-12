@@ -3,7 +3,6 @@ package pages;
 import lombok.extern.log4j.Log4j2;
 import manager.PageFactoryManager;
 import manager.PropertyManager;
-import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -11,7 +10,6 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -287,17 +285,10 @@ public class EpamPages extends CorePage {
         }
         waitForPageLoadComplete();
     }
-    public void checkCountriesDisplay(){
-        log.info("checking display for various country regions selected");
+
+    public void focusOnRegionSelector() {
         scrollToElement(getListOfRegions().get(1));
         scrollForSetAmount("-200");
-        Assertions.assertTrue(canadaAmericaShown(), "Canada is not displayed in America region list");
-        clickWR(getListOfRegions().get(1));
-        Assertions.assertTrue(isArmeniaEMEAShown(), "Armenia is not displayed in EMEA region list");
-        clickWR(getListOfRegions().get(2));
-        Assertions.assertTrue(isAustraliaAPACShown(), "Australia is not displayed in APAC region list");
-        clickWR(getListOfRegions().get(0));
-        Assertions.assertTrue(canadaAmericaShown(), "Canada is not displayed in America region list after switch back to America region");
     }
 
     public void openHomePage() {

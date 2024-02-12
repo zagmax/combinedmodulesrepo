@@ -65,8 +65,8 @@ public class TaskOneTests {
     @Test
     @DisplayName("4. Check policies List")
     public void checkPoliciesList() {
-        List<String> policy = Arrays.asList("INVESTORS", "COOKIE POLICY", "OPEN SOURCE", "APPLICANT PRIVACY NOTICE", "PRIVACY POLICY", "WEB ACCESSIBILITY");
-        Assertions.assertTrue(policy.containsAll(epamPages.getPolicyList()), "Some policies are missing on footer or have incorrect text");
+        List<String> policy = Arrays.asList("INVESTORS", "OPEN SOURCE", "PRIVACY POLICY", "COOKIE POLICY", "APPLICANT PRIVACY NOTICE", "WEB ACCESSIBILITY");
+        Assertions.assertEquals(policy,(epamPages.getPolicyList()), "Some policies are missing on footer or have incorrect text");
         log.info("policy list test executed");
     }
 
@@ -74,7 +74,14 @@ public class TaskOneTests {
     @DisplayName("5. Check that allow to switch location list by region")
     public void checkLocationSwitchByRegion() {
         epamPages.openPage(PROPERTIES.getProperty("epamContacts"));
-        epamPages.checkCountriesDisplay();
+        epamPages.focusOnRegionSelector();
+        Assertions.assertTrue(epamPages.canadaAmericaShown(), "Canada is not displayed in America region list");
+        epamPages.clickWR(epamPages.getListOfRegions().get(1));
+        Assertions.assertTrue(epamPages.isArmeniaEMEAShown(), "Armenia is not displayed in EMEA region list");
+        epamPages.clickWR(epamPages.getListOfRegions().get(2));
+        Assertions.assertTrue(epamPages.isAustraliaAPACShown(), "Australia is not displayed in APAC region list");
+        epamPages.clickWR(epamPages.getListOfRegions().get(0));
+        Assertions.assertTrue(epamPages.canadaAmericaShown(), "Canada is not displayed in America region list after switch back to America region");
         log.info("region countries test executed");
     }
 

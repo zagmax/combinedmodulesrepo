@@ -161,7 +161,7 @@ public class TaskTwoTests {
         corePage.clickWR(demoShopCheckout.getTermsOfServiceCheckbox());
         corePage.clickWR(demoShopCheckout.getCheckoutButton());
         corePage.clickWR(demoShopCheckout.getAddressSelect());
-        corePage.clickWR(demoShopCheckout.getListOfAddresses().get(1));
+        corePage.clickWR(demoShopCheckout.getNewAddress());
         corePage.clickWR(demoShopCheckout.getCountriesListDropdown());
         corePage.clickWR(demoShopCheckout.getListOfCountries().get(1));
         demoShopCheckout.fillAddressSection();

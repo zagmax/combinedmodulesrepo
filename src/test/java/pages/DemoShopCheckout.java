@@ -38,6 +38,9 @@ public class DemoShopCheckout {
     @FindBy(css = "[id=billing-address-select] option")
     private List<WebElement> listOfAddresses;
 
+    @FindBy(css = "[id=billing-address-select] :last-child")
+    private WebElement newAddress;
+
     @FindBy(css = "[id=BillingNewAddress_CountryId]")
     private WebElement countriesListDropdown;
 
@@ -52,6 +55,7 @@ public class DemoShopCheckout {
 
     @FindBy(css = ".order-completed .title")
     private WebElement completedOrderTitle;
+
     public void fillAddressSection(){
         log.info("filling address section");
         getCity().sendKeys("city");
@@ -59,11 +63,11 @@ public class DemoShopCheckout {
         getZipPost().sendKeys("010101");
         getPhoneNumber().sendKeys("+499999999");
     }
-
     public boolean isCompletedOrderTitleShown() {
         log.info("checking display of order completion title");
         return completedOrderTitle.isDisplayed();
     }
+
     public void goThroughCheckoutSections(CorePage corePage){
         log.info("going through checkout billing sections");
         for (int i = 0; i < 5; i++) {
@@ -73,7 +77,6 @@ public class DemoShopCheckout {
     public List<WebElement> getContinueButtons() {
         return continueButtons;
     }
-
     public WebElement getSubmitCheckoutButton() {
         return submitCheckoutButton;
     }
@@ -88,6 +91,10 @@ public class DemoShopCheckout {
 
     public WebElement getCountriesListDropdown() {
         return countriesListDropdown;
+    }
+
+    public WebElement getNewAddress() {
+        return newAddress;
     }
 
     public List<WebElement> getListOfCountries() {
